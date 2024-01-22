@@ -23,11 +23,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('admin.dashboard');
-    }
-
-    public function thankYou()
-    {
-        return view('user.thank-you');
+        return view('home');
     }
 }

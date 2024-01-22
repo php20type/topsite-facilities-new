@@ -9,6 +9,7 @@ use App\Models\PropertyType;
 use App\Models\PropertyService;
 use App\Models\Property;
 use App\Models\PropertyMedia;
+use Illuminate\Support\Facades\Auth;
 
 class PropertyController extends Controller
 {
@@ -19,8 +20,8 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Property::with('propertyType', 'propertyService')->orderBy('created_at', 'desc')->get();
-        return view('Customer.property.list', compact('properties'));
+        $properties = Property::with('propertyType', 'propertyService')->where('user_id', auth('user')->user()->id)->orderBy('created_at', 'desc')->get();
+        return view('customer.property.list', compact('properties'));
     }
 
     /**
@@ -79,6 +80,7 @@ class PropertyController extends Controller
             'outdoor_images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,wmv|max:256000'
         ]);
 
+        $validatedData['user_id'] = auth()->user()->id;
         $property = Property::create($validatedData);
 
         // Handle indoor images
@@ -126,7 +128,7 @@ class PropertyController extends Controller
             return response()->view('errors.404', [], 404);
         }
 
-        return view('Customer.property.show', compact('property', 'indoorMedia', 'outdoorMedia'));
+        return view('customer.property.show', compact('property', 'indoorMedia', 'outdoorMedia'));
     }
 
     public function fetchMoreMedia(Request $request)

@@ -10,6 +10,7 @@ class Property extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'user_id',
         'property_type_id',
         'address1',
         'address2',
@@ -35,4 +36,8 @@ class Property extends Model
         return $this->hasMany(PropertyMedia::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

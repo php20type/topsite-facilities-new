@@ -69,7 +69,7 @@
                     </a>
                 </li>
                 <li class="">
-                    <a href="{{ route('logout') }}"
+                    <a href="javascript:void(0)"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
                             fill="none">
@@ -89,10 +89,10 @@
                         </svg>
                         Logout
                     </a>
+                    <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
+                        {{ csrf_field() }}
+                    </form>
                 </li>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    {{ csrf_field() }}
-                </form>
             </ul>
         </nav>
     </aside>

@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,41 +15,44 @@ use App\Http\Controllers\HomeController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes();
 
-Route::get('/', function () {
-    return view('welcome');
+Route::view('/', 'welcome');
+Auth::routes(['verify' => true]);
+
+Route::get('/login/admin', [LoginController::class, 'showAdminLoginForm']);
+Route::get('/login/user', [LoginController::class, 'showUserLoginForm']);
+Route::get('/register/user', [RegisterController::class, 'showUserRegisterForm']);
+
+Route::post('/login/admin', [LoginController::class, 'adminLogin']);
+Route::post('/login/user', [LoginController::class, 'userLogin']);
+Route::post('/register/admin', [RegisterController::class, 'createAdmin']);
+Route::post('/register/user', [RegisterController::class, 'createUser']);
+
+Route::view('/home', 'home')->middleware('auth');
+Route::view('admin', '/admin/customer/list');
+Route::view('user', '/customer/Property/list');
+Route::view('thank-you', '/thank-you');
+
+// Logout route for the user guard
+Route::post('/user/logout', [LoginController::class, 'userLogout'])->name('user.logout');
+Route::post('/admin/logout', [LoginController::class, 'adminLogout'])->name('admin.logout');
+
+// Logout route for the admin guard
+Route::middleware('auth:admin')->group(function () {
+
 });
 
-// User Routes
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/thank-you', [HomeController::class, 'thankYou'])->name('thank-you');
+// Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
 
-// User Authentication Routes
-Route::group(['prefix' => 'user'], function () {
-    Route::get('login', [UserController::class, 'showLoginForm'])->name('user.login');
-    Route::post('login', [UserController::class, 'login']);
-    Route::get('register', [UserController::class, 'showRegistrationForm'])->name('user.register');
-    Route::get('register', [UserController::class, 'register']);
-});
-
-// Admin Authentication Routes
-Route::group(['prefix' => 'admin'], function () {
-    Route::get('login', [AdminController::class, 'showLoginForm'])->name('admin.login');
-    Route::get('login', [AdminController::class, 'login']);
-});
-Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
-Route::group(['prefix' => 'admin', 'middleware' => 'admin'], function () {
-    // Admin routes here
-});
 
 Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Customer'], function () {
     Route::resource('property', 'PropertyController')->names('user.property');
     Route::get('/fetch-more-media', 'PropertyController@fetchMoreMedia');
 });
 
+Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\admin'], function () {
+    Route::resource('customer', 'CustomerController')->names('admin.customer');
+    Route::get('/property-details/{id}', 'CustomerController@propertyDetails')->name('admin.property.details');
+    Route::get('/request', 'RequestController@index')->name('admin.request');
+});
 
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

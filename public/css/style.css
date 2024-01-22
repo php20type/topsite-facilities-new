@@ -342,6 +342,11 @@ title {
     display: flex;
     align-items: center;
 }
+.main-content.app-content .top-header .left-content {
+    display: flex;
+    align-items: center;
+    flex: 0 0 60%;
+}
 .top-header .title-header {
     flex: 0 0 60%;
 }
