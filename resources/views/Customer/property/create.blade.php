@@ -154,7 +154,7 @@
             <div class="container-fluid">
                 {{ Form::open(['url' => route('user.property.store'), 'method' => 'POST', 'files' => true, 'class' => 'PropertyForm']) }}
                 <div class="row">
-                    @include('Customer.property.form')
+                    @include('customer.property.form')
                     <div class="col-lg-12">
                         <div class="form-group">
                             <input type="submit" class="btn btn-primary" value="Submit">
