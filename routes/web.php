@@ -54,5 +54,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\admin'],
     Route::resource('customer', 'CustomerController')->names('admin.customer');
     Route::get('/property-details/{id}', 'CustomerController@propertyDetails')->name('admin.property.details');
     Route::get('/request', 'RequestController@index')->name('admin.request');
+    Route::post('/search-properties', 'CustomerController@searchProperties')->name('search.properties');
+    Route::post('/update-customer-status', 'CustomerController@updateStatus')->name('update.customer.status');
+
+
 });
 

@@ -67,10 +67,10 @@
                     <div class="row mb-lg-4 mb-3">
                         <div class="col-lg-6">
                             <!-- <div class="search-client-sec">
-                                                                                                                                                                                                                                                                                                                              <input type="text" class="form-control me-3" placeholder="Search clients" />
-                                                                                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
-                                                                                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
-                                                                                                                                                                                                                                                                                                                         </div> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                          <input type="text" class="form-control me-3" placeholder="Search clients" />
+                                                                                                                                                                                                                                                                                                                                                                                                                          <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
+                                                                                                                                                                                                                                                                                                                                                                                                                          <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
+                                                                                                                                                                                                                                                                                                                                                                                                                     </div> -->
                         </div>
                         <div class="col-lg-6">
                             <div class="action-btn">
@@ -118,7 +118,7 @@
                         </thead>
                         <tbody>
                             @foreach ($users as $user)
-                                <tr>
+                                <tr id="customerRow_{{ $user->id }}">
                                     <td>
                                         <div class="profile-box d-flex align-items-center">
                                             <div class="user-svg me-2">
@@ -131,7 +131,11 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td><a href="#"><i class="fa-regular fa-circle-check"></i></a></td>
+                                    <td>
+                                        <a href="#" class="check-button" data-user-id="{{ $user->id }}">
+                                            <i class="fa-regular fa-circle-check"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -155,6 +159,32 @@
                 "visible": false,
                 "searchable": false
             }]
+        });
+
+        $(document).ready(function() {
+            $('.check-button').on('click', function(e) {
+                e.preventDefault();
+
+                var userId = $(this).data('user-id');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('update.customer.status') }}',
+                    data: {
+                        userId: userId,
+                        isApprov: 1,
+                        '_token': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $('#customerRow_' + userId).remove();
+                        console.log('Status updated successfully');
+                    },
+                    error: function(error) {
+                        // Handle error
+                        console.error('Error updating status', error);
+                    }
+                });
+            });
         });
     </script>
 @endsection

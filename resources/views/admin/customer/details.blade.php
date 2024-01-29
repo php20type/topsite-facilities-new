@@ -62,7 +62,7 @@
         <section class="PropertyDetail">
             <div class="container-fluid">
                 <div class="back">
-                    <a href="{{ route('user.property.index') }}">
+                    <a href="{{ route('admin.customer.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="12" viewBox="0 0 21 12"
                             fill="none">
                             <path

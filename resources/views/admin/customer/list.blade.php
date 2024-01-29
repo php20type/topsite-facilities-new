@@ -29,7 +29,8 @@
             </div>
             <div class="right-content">
                 <form class="search-property position-relative me-3" action="" id="">
-                    <input type="text" placeholder="Search Property..." class="form-control" />
+                    <input type="text" id="search-property-input" placeholder="Search Property..."
+                        class="form-control" />
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
                 </form>
                 <div class="action-button">
@@ -68,10 +69,10 @@
                     <div class="row mb-lg-4 mb-3">
                         <div class="col-lg-6">
                             <!-- <div class="search-client-sec">
-                                                                                                                                                                                                  <input type="text" class="form-control me-3" placeholder="Search clients" />
-                                                                                                                                                                                                  <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
-                                                                                                                                                                                                  <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
-                                                                                                                                                                                             </div> -->
+                                                                                                                                                                                                                                                              <input type="text" class="form-control me-3" placeholder="Search clients" />
+                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
+                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
+                                                                                                                                                                                                                                                         </div> -->
                         </div>
                         <div class="col-lg-6">
                             <div class="action-btn">
@@ -168,15 +169,25 @@
     <!-- dashboard screen end -->
 @endsection
 @section('page_scripts')
-    <script>
-        $('#clients-management').DataTable({
-            select: false,
-            "columnDefs": [{
-                className: "Name",
+    @parent
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-                "visible": false,
-                "searchable": false
-            }]
+    <script>
+        $(document).ready(function() {
+            var dataTable = $('#clients-management').DataTable({
+                select: false,
+                columnDefs: [{
+                    className: 'Name',
+                    visible: false,
+                    searchable: false
+                }]
+            });
+
+            // Add keyup event listener to the search input
+            document.getElementById('search-property-input').addEventListener('keyup', function() {
+                dataTable.search($(this).val()).draw();
+            });
+
         });
     </script>
 @endsection

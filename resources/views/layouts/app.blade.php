@@ -35,7 +35,8 @@
 <!-- Popper JS and Bootstrap JS -->
 <script src="{{ URL::asset('js/bootstrap.bundle.js') }}"></script>
 <script src="{{ URL::asset('js/popper.min.js') }}"></script>
-<script src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
+{{-- <script src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script> --}}
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="{{ URL::asset('js/custom.js') }}"></script>
 @yield('page_scripts')
 
