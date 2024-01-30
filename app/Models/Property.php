@@ -17,18 +17,12 @@ class Property extends Model
         'bedrooms',
         'bathrooms',
         'parking',
-        'property_service_id',
         'area'
     ];
 
     public function propertyType()
     {
         return $this->belongsTo(PropertyType::class, 'property_type_id');
-    }
-
-    public function propertyService()
-    {
-        return $this->belongsTo(PropertyService::class, 'property_service_id');
     }
 
     public function propertyMedia()
@@ -39,5 +33,12 @@ class Property extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class)
+            ->withPivot('status')
+            ->withTimestamps();
     }
 }

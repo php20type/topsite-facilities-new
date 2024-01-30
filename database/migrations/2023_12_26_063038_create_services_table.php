@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePropertyServicesTable extends Migration
+class CreateServicesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePropertyServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('property_services', function (Blueprint $table) {
+        Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->boolean('status')->nullable()->default(0);
@@ -28,6 +28,6 @@ class CreatePropertyServicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('property_services');
+        Schema::dropIfExists('services');
     }
 }

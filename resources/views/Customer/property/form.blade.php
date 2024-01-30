@@ -163,7 +163,7 @@
 
    <div class="col-lg-12">
        <div class="form-group{{ $errors->has('property_service_id') ? ' has-error' : '' }}">
-           {{ Form::select('property_service_id', $services, 0, ['class' => 'form-select fa', 'aria-label' => 'Default select example']) }}
+           {{ Form::select('property_service_id[]', $services, null, ['class' => 'form-select fa', 'aria-label' => 'Default select example', 'multiple' => 'multiple']) }}
            {{ Form::label('property_service_id', 'Property Service', ['class' => 'lab-style']) }}
            @if ($errors->has('property_service_id'))
                <span class="help-block">
@@ -172,6 +172,7 @@
            @endif
        </div>
    </div>
+
 
    @section('page_scripts')
        <script type="text/javascript">

@@ -267,22 +267,33 @@
                             <div class="WorkCard">
                                 <h4 class="sec-title">work Progress</h4>
                                 <div class="CardBody">
-                                    <div class="BodyInnerSec">
-                                        <p>Cleaning</p>
-                                        <a href="#" class="btn done">Done</a>
-                                    </div>
-                                    <div class="BodyInnerSec">
-                                        <p>Carpeting</p>
-                                        <a href="#" class="btn new">NEW</a>
-                                    </div>
-                                    <div class="BodyInnerSec">
-                                        <p>Paint Work</p>
-                                        <a href="#" class="btn Progress">In Progress</a>
-                                    </div>
-                                    <div class="BodyInnerSec">
-                                        <p>Plumbing</p>
-                                        <a href="#" class="btn ready">Ready for review</a>
-                                    </div>
+                                    @foreach ($property->services as $service)
+                                        <div class="BodyInnerSec">
+                                            <p>{{ $service->name }}</p>
+                                            @php
+                                                $buttonClass = '';
+                                                switch ($service->pivot->status) {
+                                                    case 'Ready for review':
+                                                        $buttonClass = 'ready';
+                                                        break;
+                                                    case 'In Progress':
+                                                        $buttonClass = 'Progress';
+                                                        break;
+                                                    case 'NEW':
+                                                        $buttonClass = 'new';
+                                                        break;
+                                                    case 'Done':
+                                                        $buttonClass = 'done';
+                                                        break;
+                                                    default:
+                                                        $buttonClass = '';
+                                                        break;
+                                                }
+                                            @endphp
+                                            <a href="#"
+                                                class="btn {{ $buttonClass }}">{{ $service->pivot->status }}</a>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

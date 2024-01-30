@@ -168,3 +168,12 @@
 
     </div>
 @endsection
+@section('page_scripts')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.form-select').selectpicker();
+
+            // Close all dropdowns with the 'form-select' class
+            $('.form-select').selectpicker('toggle');
+        });
+    @endsection

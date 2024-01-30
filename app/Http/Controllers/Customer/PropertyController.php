@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\PropertyType;
-use App\Models\PropertyService;
+use App\Models\Service;
 use App\Models\Property;
 use App\Models\PropertyMedia;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +20,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Property::with('propertyType', 'propertyService')->where('user_id', auth('user')->user()->id)->orderBy('created_at', 'desc')->get();
+        $properties = Property::with('propertyType')->where('user_id', auth('user')->user()->id)->orderBy('created_at', 'desc')->get();
         return view('customer.property.list', compact('properties'));
     }
 
@@ -34,10 +34,7 @@ class PropertyController extends Controller
         $data = array();
         $types = PropertyType::pluck("name", "id");
         $data['types'] = $this->prependFontAwesomeIcon($types);
-
-        $services = PropertyService::pluck("name", "id");
-        $data['services'] = $this->prependFontAwesomeIcon($services);
-
+        $data['services'] = Service::pluck("name", "id");
         return view("customer.property.create", $data);
     }
 
@@ -66,6 +63,7 @@ class PropertyController extends Controller
      */
     public function store(Request $request)
     {
+
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'address1' => 'required|string',
@@ -75,13 +73,20 @@ class PropertyController extends Controller
             'parking' => 'nullable|boolean',
             'area' => 'required|integer',
             'property_type_id' => 'required|exists:property_types,id',
-            'property_service_id' => 'required|exists:property_services,id',
             'indoor_images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,wmv|max:256000',
             'outdoor_images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,wmv|max:256000'
         ]);
 
-        $validatedData['user_id'] = auth()->user()->id;
+        $validatedData['user_id'] = Auth::guard('user')->id();
         $property = Property::create($validatedData);
+
+        // Get the selected service IDs from the form
+        $selectedServices = $request->input('property_service_id');
+
+        // Attach selected services to the property with status "NEW"
+        foreach ($selectedServices as $serviceId) {
+            $property->services()->attach($serviceId, ['status' => 'NEW']);
+        }
 
         // Handle indoor images
         if ($request->hasFile('indoor_images')) {
@@ -120,7 +125,7 @@ class PropertyController extends Controller
      */
     public function show($id)
     {
-        $property = Property::with('propertyType', 'propertyService', 'propertyMedia')->find($id);
+        $property = Property::with('propertyType', 'propertyMedia')->find($id);
         $indoorMedia = $property->propertyMedia()->where('category', 'indoor')->take(1)->get();
         $outdoorMedia = $property->propertyMedia()->where('category', 'outdoor')->take(1)->get();
 

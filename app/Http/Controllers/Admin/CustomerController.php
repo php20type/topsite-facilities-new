@@ -4,8 +4,11 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Service;
 use App\Models\Property;
 use \Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CustomerApproveEmail;
 
 use App\Models\User;
 
@@ -41,7 +44,7 @@ class CustomerController extends Controller
      */
     public function show(string $id)
     {
-        $properties = Property::with('propertyType', 'propertyService')->where('user_id', $id)->orderBy('created_at', 'desc')->get();
+        $properties = Property::with('propertyType')->where('user_id', $id)->orderBy('created_at', 'desc')->get();
         $users = User::find($id);
         return view('admin.customer.show', compact('properties', 'users'));
     }
@@ -62,7 +65,7 @@ class CustomerController extends Controller
         //
     }
 
-    /**
+    /** 
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
@@ -72,22 +75,23 @@ class CustomerController extends Controller
 
     public function propertyDetails(string $id)
     {
-        $property = Property::with('propertyType', 'propertyService', 'propertyMedia')->find($id);
+        $property = Property::with('propertyType', 'propertyMedia')->find($id);
         $indoorMedia = $property->propertyMedia()->where('category', 'indoor')->take(1)->get();
         $outdoorMedia = $property->propertyMedia()->where('category', 'outdoor')->take(1)->get();
+        $service = Service::all();
 
         if (!$property) {
             return response()->view('errors.404', [], 404);
         }
 
-        return view('admin.customer.details', compact('property', 'indoorMedia', 'outdoorMedia'));
+        return view('admin.customer.details', compact('property', 'indoorMedia', 'outdoorMedia', 'service'));
     }
 
     public function searchProperties(Request $request)
     {
         $searchQuery = $request->input('search_query');
         $user_id = $request->input('user_id');
-        $properties = Property::with('propertyType', 'propertyService')
+        $properties = Property::with('propertyType')
             ->where('user_id', $user_id)
             ->where('name', 'like', '%' . $searchQuery . '%')
             ->orderBy('created_at', 'desc')
@@ -99,21 +103,23 @@ class CustomerController extends Controller
         $userId = $request->input('userId');
         $isApprov = $request->input('isApprov');
 
-        try {
-            // Find the user by ID and update the is_approv status
-            $user = User::findOrFail($userId);
-            $user->is_approve = $isApprov;
-            $user->save();
+        $user = User::findOrFail($userId);
+        $user->is_approve = $isApprov;
+        $user->save();
 
-            // Fetch the updated list of customers
-            $updatedCustomers = DB::table('users')
-                ->where('is_approve', 0) // Assuming 0 means not approved
-                ->get();
+        $recipientEmail = $user->email;
+        // $to_email = $user->email;
+        // $app_from_address = Config('mail.from.address');
+        // $app_from_name = Config('mail.from.name');
+        // $subject = "hello";
 
-            return response()->json(['message' => 'Status updated successfully', 'customers' => $updatedCustomers], 200);
-        } catch (\Exception $e) {
-            // Handle the error
-            return response()->json(['error' => 'Error updating status'], 500);
-        }
+        // Mail::send([], [], function ($message) use ($to_name, $to_email, $app_from_name, $app_from_address, $subject) {
+        //     $message->to($to_email, $to_name)->subject($subject);
+        //     $message->from($app_from_address, $app_from_name);
+        // });
+
+        Mail::to($recipientEmail)->send(new CustomerApproveEmail());
+
+        return response()->json(['message' => 'Status updated successfully'], 200);
     }
 }

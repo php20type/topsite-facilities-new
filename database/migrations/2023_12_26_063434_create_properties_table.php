@@ -23,9 +23,7 @@ class CreatePropertiesTable extends Migration
             $table->integer('bathrooms'); // Number of bathrooms
             $table->boolean('parking');
             $table->integer('area')->nullable();
-            $table->unsignedBigInteger('property_service_id');
             $table->foreign('property_type_id')->references('id')->on('property_types')->onDelete('cascade');
-            $table->foreign('property_service_id')->references('id')->on('property_services')->onDelete('cascade');
             $table->timestamps();
         });
     }
