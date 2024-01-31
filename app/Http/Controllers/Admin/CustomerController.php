@@ -9,6 +9,7 @@ use App\Models\Property;
 use \Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomerApproveEmail;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 
@@ -108,15 +109,6 @@ class CustomerController extends Controller
         $user->save();
 
         $recipientEmail = $user->email;
-        // $to_email = $user->email;
-        // $app_from_address = Config('mail.from.address');
-        // $app_from_name = Config('mail.from.name');
-        // $subject = "hello";
-
-        // Mail::send([], [], function ($message) use ($to_name, $to_email, $app_from_name, $app_from_address, $subject) {
-        //     $message->to($to_email, $to_name)->subject($subject);
-        //     $message->from($app_from_address, $app_from_name);
-        // });
 
         Mail::to($recipientEmail)->send(new CustomerApproveEmail());
 

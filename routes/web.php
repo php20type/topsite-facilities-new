@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\ServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,5 +57,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin'],
     Route::get('/request', 'RequestController@index')->name('admin.request');
     Route::post('/search-properties', 'CustomerController@searchProperties')->name('search.properties');
     Route::post('/update-customer-status', 'CustomerController@updateStatus')->name('update.customer.status');
+    // Route::resource('services', 'ServiceController')->names('admin.service');
+    Route::get('services/{property}/services/{service}', 'ServiceController@show')->name('admin.service.show');
+
+
 });
 

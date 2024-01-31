@@ -62,7 +62,7 @@
         <section class="PropertyDetail">
             <div class="container-fluid">
                 <div class="back">
-                    <a href="{{ route('admin.customer.index') }}">
+                    <a href="{{ route('admin.customer.show', ['customer' => $property->user_id]) }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="12" viewBox="0 0 21 12"
                             fill="none">
                             <path
@@ -290,8 +290,10 @@
                                                         break;
                                                 }
                                             @endphp
-                                            <a href="#"
+                                            <a href="{{ route('admin.service.show', ['property' => $property->id, 'service' => $service->id]) }}"
                                                 class="btn {{ $buttonClass }}">{{ $service->pivot->status }}</a>
+
+
                                         </div>
                                     @endforeach
                                 </div>

@@ -69,10 +69,10 @@
                     <div class="row mb-lg-4 mb-3">
                         <div class="col-lg-6">
                             <!-- <div class="search-client-sec">
-                                                                                                                                                                                                                                                              <input type="text" class="form-control me-3" placeholder="Search clients" />
-                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
-                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
-                                                                                                                                                                                                                                                         </div> -->
+                                                                                                                                                                                                                                                                      <input type="text" class="form-control me-3" placeholder="Search clients" />
+                                                                                                                                                                                                                                                                      <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
+                                                                                                                                                                                                                                                                      <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
+                                                                                                                                                                                                                                                                 </div> -->
                         </div>
                         <div class="col-lg-6">
                             <div class="action-btn">
@@ -126,9 +126,7 @@
                                 <tr>
                                     <td>
                                         <div class="profile-box">
-                                            <div class="user-svg">
-                                                <img src="{{ URL::asset('img/home/rounded.png') }}" />
-                                            </div>
+
                                             <div class="user-name">
                                                 <a href="{{ route('admin.customer.show', ['customer' => $user->id]) }}">
                                                     {{ $user->name }}

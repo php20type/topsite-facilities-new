@@ -27,7 +27,7 @@ class CustomerApproveEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Customer Approve Email',
+            subject: 'Customer Approve Email From topeside',
         );
     }
 
@@ -37,7 +37,7 @@ class CustomerApproveEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.approve',
+            view: 'emails.customer_approve_email',
         );
     }
 
