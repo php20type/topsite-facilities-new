@@ -309,6 +309,8 @@
                                         <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
                                     </a>
                                 @endif
+                                <button class="delete-media position-absolute top-0 start-0 m-2"
+                                    data-media-id="{{ $media->id }}">Delete</button>
                             </div>
                         @endforeach
                         @foreach ($outdoorMedia as $media)
@@ -323,6 +325,8 @@
                                         <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
                                     </a>
                                 @endif
+                                <button class="delete-media position-absolute top-0 start-0 m-2"
+                                    data-media-id="{{ $media->id }}">Delete</button>
                             </div>
                         @endforeach
                     </div>
@@ -358,22 +362,35 @@
                             <div class="WorkCard">
                                 <h4 class="sec-title">work Progress</h4>
                                 <div class="CardBody">
-                                    <div class="BodyInnerSec">
-                                        <p>Cleaning</p>
-                                        <a href="#" class="btn done">Done</a>
-                                    </div>
-                                    <div class="BodyInnerSec">
-                                        <p>Carpeting</p>
-                                        <a href="#" class="btn new">NEW</a>
-                                    </div>
-                                    <div class="BodyInnerSec">
-                                        <p>Paint Work</p>
-                                        <a href="#" class="btn Progress">In Progress</a>
-                                    </div>
-                                    <div class="BodyInnerSec">
-                                        <p>Plumbing</p>
-                                        <a href="#" class="btn ready">Ready for review</a>
-                                    </div>
+                                    @foreach ($property->services as $service)
+                                        <div class="BodyInnerSec">
+                                            <p>{{ $service->name }}</p>
+                                            @php
+                                                $buttonClass = '';
+                                                switch ($service->pivot->status) {
+                                                    case 'Ready for review':
+                                                        $buttonClass = 'ready';
+                                                        break;
+                                                    case 'In Progress':
+                                                        $buttonClass = 'Progress';
+                                                        break;
+                                                    case 'NEW':
+                                                        $buttonClass = 'new';
+                                                        break;
+                                                    case 'Done':
+                                                        $buttonClass = 'done';
+                                                        break;
+                                                    default:
+                                                        $buttonClass = '';
+                                                        break;
+                                                }
+                                            @endphp
+                                            <a href="{{ route('user.service.show', ['property' => $property->id, 'service' => $service->id]) }}"
+                                                class="btn {{ $buttonClass }}">{{ $service->pivot->status }}</a>
+
+
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -518,14 +535,43 @@
         function createMediaElement(media) {
             var isVideo = /\.(mp4|mov)$/i.test(media.file_path);
             var mediaPath = assetUrl + 'storage/' + media.file_path;
+            var $mediaElement;
 
             if (isVideo) {
-                return $('<div class="video_media"><video controls class="img-fluid"><source src="' + mediaPath +
+                $mediaElement = $('<div class="video_media"><video controls class="img-fluid"><source src="' + mediaPath +
                     '" type="video/mp4">Your browser does not support the video tag.</video></div>');
             } else {
-                return $('<div class="image_media"><a href="#" class="img-fluid"><img src="' + mediaPath +
+                $mediaElement = $('<div class="image_media"><a href="#" class="img-fluid"><img src="' + mediaPath +
                     '" alt=""></a></div>');
             }
+
+            // Append the delete button
+            var $deleteButton = $('<button class="delete-media" data-media-id="' + media.id + '">Delete</button>');
+
+            // Append the delete button to the media element
+            $mediaElement.append($deleteButton);
+
+            return $mediaElement;
         }
+        $('.delete-media').click(function() {
+            var mediaId = $(this).data('media-id');
+
+            $.ajax({
+                url: '{{ route('media.delete', ['mediaId' => '__mediaId__']) }}'.replace('__mediaId__',
+                    mediaId),
+                type: 'DELETE',
+                data: {
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    // Remove the media element from the DOM
+                    $(`[data-media-id="${mediaId}"]`).parent().remove();
+                    $(this).parent().remove(); // Assuming button is a direct child of the media element
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
     </script>
 @endsection

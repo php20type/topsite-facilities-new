@@ -95,8 +95,8 @@
                                 <img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user photo" />
                             </div>
                             <div class="user-info">
-                                <h4>{{ $property->user->name }}</h4>
-                                <h6>Last online {{ $property->user->created_at->diffForHumans() }}</h6>
+                                <h4>Topside Facilities Management</h4>
+                                <h6>Last online 5 hours ago</h6>
                             </div>
                         </div>
                         <div class="user-box-right-fix col-4">

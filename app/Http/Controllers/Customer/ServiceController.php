@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -41,7 +41,7 @@ class ServiceController extends Controller
         $service = Service::findOrFail($serviceId);
         $property = Property::findOrFail($propertyId);
         $services = $property->services()->get();
-        return view('admin.services.show', compact('service', 'property', 'services'));
+        return view('customer.services.show', compact('service', 'property', 'services'));
     }
 
     /**

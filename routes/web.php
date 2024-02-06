@@ -49,6 +49,8 @@ Route::middleware('auth:admin')->group(function () {
 Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Customer'], function () {
     Route::resource('property', 'PropertyController')->names('user.property');
     Route::get('/fetch-more-media', 'PropertyController@fetchMoreMedia');
+    Route::get('property/{property}/services/{service}', 'ServiceController@show')->name('user.service.show');
+    Route::delete('/delete-media/{mediaId}', 'PropertyController@deleteMedia')->name('media.delete');
 });
 
 Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin'], function () {
@@ -58,7 +60,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin'],
     Route::post('/search-properties', 'CustomerController@searchProperties')->name('search.properties');
     Route::post('/update-customer-status', 'CustomerController@updateStatus')->name('update.customer.status');
     // Route::resource('services', 'ServiceController')->names('admin.service');
-    Route::get('services/{property}/services/{service}', 'ServiceController@show')->name('admin.service.show');
+    Route::get('property/{property}/services/{service}', 'ServiceController@show')->name('admin.service.show');
 
 
 });

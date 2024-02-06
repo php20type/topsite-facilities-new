@@ -27,10 +27,10 @@
                 </div>
             </div>
             <div class="right-content">
-                <form class="search-property position-relative me-3" action="" id="">
+                {{-- <form class="search-property position-relative me-3" action="" id="">
                     <input type="text" placeholder="Search Property..." class="form-control" />
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
-                </form>
+                </form> --}}
                 <div class="action-button">
                     <a href="#" class="me-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
@@ -67,10 +67,10 @@
                     <div class="row mb-lg-4 mb-3">
                         <div class="col-lg-6">
                             <!-- <div class="search-client-sec">
-                                                                                                                                                                                                                                                                                                                                                                                                                          <input type="text" class="form-control me-3" placeholder="Search clients" />
-                                                                                                                                                                                                                                                                                                                                                                                                                          <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
-                                                                                                                                                                                                                                                                                                                                                                                                                          <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
-                                                                                                                                                                                                                                                                                                                                                                                                                     </div> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                              <input type="text" class="form-control me-3" placeholder="Search clients" />
+                                                                                                                                                                                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
+                                                                                                                                                                                                                                                                                                                                                                                                                              <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
+                                                                                                                                                                                                                                                                                                                                                                                                                         </div> -->
                         </div>
                         <div class="col-lg-6">
                             <div class="action-btn">

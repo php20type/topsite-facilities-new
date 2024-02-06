@@ -8,17 +8,22 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Address;
 
 class CustomerApproveEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    // protected $recipientEmail;
+
     /**
      * Create a new message instance.
+     *
+     * @param string $recipientEmail
      */
     public function __construct()
     {
-        //
+        // $this->recipientEmail = $recipientEmail;
     }
 
     /**

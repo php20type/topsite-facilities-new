@@ -189,4 +189,15 @@ class PropertyController extends Controller
     {
         //
     }
+
+    public function deleteMedia($mediaId)
+    {
+        // Find the media by ID and delete it from the database
+        $media = PropertyMedia::findOrFail($mediaId);
+        $media->delete();
+
+        // Return a response indicating success
+        return response()->json(['message' => 'Media deleted successfully']);
+    }
+
 }

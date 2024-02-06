@@ -6,10 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Property;
-use \Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\CustomerApproveEmail;
-use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 
@@ -109,8 +106,17 @@ class CustomerController extends Controller
         $user->save();
 
         $recipientEmail = $user->email;
+        $email_subject = "hello";
 
-        Mail::to($recipientEmail)->send(new CustomerApproveEmail());
+        Mail::send('emails.customer_approve_email', $recipientEmail, function ($message, $recipientEmail, $email_subject) {
+            $message->to($recipientEmail, 'topside')
+                ->subject($email_subject);
+            $message->from('topside@gmail.com', 'Alex');
+
+        });
+        echo "Successfully sent the email";
+
+        // Mail::to($recipientEmail)->send(new CustomerApproveEmail());
 
         return response()->json(['message' => 'Status updated successfully'], 200);
     }
