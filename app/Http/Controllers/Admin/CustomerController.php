@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\Property;
 use App\Models\PropertyDocument;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\CustomerApproveEmail;
 
 use App\Models\User;
 
@@ -18,7 +19,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $users = User::whereNotNull('email_verified_at')->where('is_approve', 1)->get();
+        $users = User::where('is_approve', 1)->get();
         return view('admin.customer.list', compact('users'));
     }
 
