@@ -11,6 +11,11 @@
                 <h2 class="card-header"> {{ isset($url) ? ucwords($url) : '' }} {{ __('Login') }}</h2>
                 <p>Need an account? <span><a href="#">Get started!</a></span></p>
             </div>
+            @if ($errors->has('error'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('error') }}
+                </div>
+            @endif
             @isset($url)
                 <form class="singup-form-sec" method="POST" action='{{ url("login/$url") }}' aria-label="{{ __('Login') }}">
                 @else

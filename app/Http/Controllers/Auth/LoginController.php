@@ -55,8 +55,13 @@ class LoginController extends Controller
         ]);
         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
             return redirect()->route('admin.customer.index');
+        } else {
+            // Login attempt failed
+            return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors([
+                'error' => 'Invalid email or password. Please try again.',
+            ]);
         }
-        return back()->withInput($request->only('email', 'remember'));
+        // return back()->withInput($request->only('email', 'remember'));
     }
 
     public function showUserLoginForm()
@@ -77,6 +82,11 @@ class LoginController extends Controller
             } else {
                 return redirect('/thank-you');
             }
+        } else {
+            // Login attempt failed
+            return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors([
+                'error' => 'Invalid email or password. Please try again.',
+            ]);
         }
     }
 

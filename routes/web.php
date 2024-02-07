@@ -61,5 +61,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin'],
     Route::post('/update-customer-status', 'CustomerController@updateStatus')->name('update.customer.status');
     // Route::resource('services', 'ServiceController')->names('admin.service');
     Route::get('property/{property}/services/{service}', 'ServiceController@show')->name('admin.service.show');
+    Route::post('/upload', 'CustomerController@upload')->name('upload');
+    Route::delete('/documents/{id}', 'CustomerController@deleteDocument')->name('delete.document');
+
 });
 

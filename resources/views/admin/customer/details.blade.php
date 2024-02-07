@@ -302,48 +302,38 @@
                         <div class="col-lg-6">
                             <div class="WorkCard">
                                 <h4 class="sec-title">Paper Work</h4>
-                                <form id="file-upload-form" class="uploader">
-                                    <input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+                                <form id="file-upload-form" class="uploader" enctype="multipart/form-data">
+                                    <input type="hidden" id="property-id" value="{{ $property->id }}">
+                                    <input id="file-upload" type="file" name="fileUpload" accept="image/*"
+                                        style="display: none;">
                                     <label for="file-upload" id="file-drag">
-                                        <img id="file-image" src="#" alt="Preview" class="hidden">
                                         <div id="start">
                                             <i class="fa-solid fa-cloud-arrow-up"></i>
                                             <div>Upload</div>
                                             <div id="notimage" class="hidden">Please select an image</div>
-                                            <span id="file-upload-btn" class="btn btn-primary d-none">Select a
-                                                file</span>
-                                        </div>
-                                        <div id="response" class="hidden">
-                                            <div id="messages"></div>
-                                            <progress class="progress" id="file-progress" value="0">
-                                                <span>0</span>%
-                                            </progress>
+                                            {{-- <span id="file-upload-btn" class="btn btn-primary">Select a file</span> --}}
                                         </div>
                                     </label>
                                 </form>
-                                <div class="BodyInnerSec">
-                                    <div class="PaperWork">
-                                        <div class="ViewDocument">
-                                            <i class="fa-light fa-file"></i>
-                                            <p>View Document</p>
-                                        </div>
-                                        <div class="DeleteBtn">
-                                            <a href="#"><i class="fa-light fa-trash"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="PaperWork">
-                                        <div class="ViewDocument">
-                                            <i class="fa-light fa-file"></i>
-                                            <p>View Document</p>
-                                        </div>
-                                        <div class="DeleteBtn">
-                                            <a href="#"><i class="fa-light fa-trash"></i></a>
+                                @foreach ($property->propertyDocument as $document)
+                                    <div class="BodyInnerSec">
+                                        <div class="PaperWork">
+                                            <div class="ViewDocument" id="document-preview">
+                                                <i class="fa-light fa-file"></i>
+                                                <a href="{{ asset('storage/' . $document->document_path) }}"
+                                                    target="_blank">View Document</a>
+                                            </div>
+                                            <div class="DeleteBtn">
+                                                <button class="btn fa-light fa-trash delete-document"
+                                                    data-document-id="{{ $document->id }}"
+                                                    data-delete-url="{{ route('delete.document', $document->id) }}"></button>
+                                            </div>
                                         </div>
                                     </div>
-
-                                </div>
+                                @endforeach
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -422,5 +412,89 @@
                     '" alt=""></a></div>');
             }
         }
+
+        $("#file-upload-btn").click(function() {
+            $("#file-upload").click();
+        });
+
+        $("#file-upload").change(function() {
+            var file = $(this)[0].files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $("#file-image").attr("src", e.target.result).removeClass(
+                        "hidden"); // Display the selected image
+                }
+                reader.readAsDataURL(file);
+                $("#upload-btn").removeClass("d-none"); // Show the upload button
+            }
+        });
+
+        var uploadRoute = '{{ route('upload') }}';
+        var assetBaseUrl = "{{ asset('storage/') }}";
+        var deleteDocumentUrl = "{{ route('delete.document', ['id' => ':id']) }}";
+
+        $("#file-upload").change(function() {
+            var formData = new FormData();
+            formData.append('fileUpload', $(this)[0].files[0]);
+            formData.append('property_id', $("#property-id").val());
+            formData.append('_token', '{{ csrf_token() }}');
+
+            $.ajax({
+                url: '{{ route('upload') }}',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    var newDocument =
+                        '<div class="BodyInnerSec">' +
+                        '<div class="PaperWork">' +
+                        '<div class="ViewDocument" id="document-preview">' +
+                        '<i class="fa-light fa-file"></i>' +
+                        '<a href="' + assetBaseUrl + '/' + response.document_path +
+                        '" target="_blank">View Document</a>' +
+                        '</div>' +
+                        '<div class="DeleteBtn">' +
+                        '<button class="btn fa-light fa-trash delete-document" data-document-id="' +
+                        response.document.id +
+                        '" data-delete-url="' + deleteDocumentUrl.replace(':id', response.document.id) +
+                        '"></button>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+
+                    $('.BodyInnerSec:last').after(newDocument);
+                    // Clear the file input field
+                    $('#file-upload').val('');
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        });
+        $(document).on('click', '.delete-document', function(e) {
+            e.preventDefault();
+
+            var documentId = $(this).data('document-id');
+            var deleteUrl = $(this).data('delete-url');
+            var documentEntry = $(this).closest('.BodyInnerSec');
+
+            $.ajax({
+                url: deleteUrl,
+                type: 'DELETE',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "document_id": documentId
+                },
+                success: function(response) {
+                    // Remove the document entry from the DOM
+                    documentEntry.remove();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
     </script>
 @endsection

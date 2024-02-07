@@ -405,8 +405,7 @@
                                             <i class="fa-solid fa-cloud-arrow-up"></i>
                                             <div>Upload</div>
                                             <div id="notimage" class="hidden">Please select an image</div>
-                                            <span id="file-upload-btn" class="btn btn-primary d-none">Select a
-                                                file</span>
+                                            <span id="file-upload-btn" class="btn btn-primary d-none">Select a file</span>
                                         </div>
                                         <div id="response" class="hidden">
                                             <div id="messages"></div>
@@ -420,52 +419,16 @@
                                     <div class="PaperWork">
                                         <div class="ViewDocument">
                                             <i class="fa-light fa-file"></i>
-                                            <p>View Document</p>
+                                            <p id="document-link">View Document</p>
                                         </div>
                                         <div class="DeleteBtn">
                                             <a href="#"><i class="fa-light fa-trash"></i></a>
                                         </div>
                                     </div>
-                                    <div class="PaperWork">
-                                        <div class="ViewDocument">
-                                            <i class="fa-light fa-file"></i>
-                                            <p>View Document</p>
-                                        </div>
-                                        <div class="DeleteBtn">
-                                            <a href="#"><i class="fa-light fa-trash"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="PaperWork">
-                                        <div class="ViewDocument">
-                                            <i class="fa-light fa-file"></i>
-                                            <p>View Document</p>
-                                        </div>
-                                        <div class="DeleteBtn">
-                                            <a href="#"><i class="fa-light fa-trash"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="PaperWork">
-                                        <div class="ViewDocument">
-                                            <i class="fa-light fa-file"></i>
-                                            <p>View Document</p>
-                                        </div>
-                                        <div class="DeleteBtn">
-                                            <a href="#"><i class="fa-light fa-trash"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="PaperWork">
-                                        <div class="ViewDocument">
-                                            <i class="fa-light fa-file"></i>
-                                            <p>View Document</p>
-                                        </div>
-                                        <div class="DeleteBtn">
-                                            <a href="#"><i class="fa-light fa-trash"></i></a>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

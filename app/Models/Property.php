@@ -30,6 +30,11 @@ class Property extends Model
         return $this->hasMany(PropertyMedia::class);
     }
 
+    public function propertyDocument()
+    {
+        return $this->hasMany(PropertyDocument::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

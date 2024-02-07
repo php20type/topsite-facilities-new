@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Property;
+use App\Models\PropertyDocument;
 use Illuminate\Support\Facades\Mail;
 
 use App\Models\User;
@@ -73,7 +74,7 @@ class CustomerController extends Controller
 
     public function propertyDetails(string $id)
     {
-        $property = Property::with('propertyType', 'propertyMedia')->find($id);
+        $property = Property::with('propertyType', 'propertyMedia', 'propertyDocument')->find($id);
         $indoorMedia = $property->propertyMedia()->where('category', 'indoor')->take(1)->get();
         $outdoorMedia = $property->propertyMedia()->where('category', 'outdoor')->take(1)->get();
         $service = Service::all();
@@ -119,5 +120,40 @@ class CustomerController extends Controller
         // Mail::to($recipientEmail)->send(new CustomerApproveEmail());
 
         return response()->json(['message' => 'Status updated successfully'], 200);
+    }
+    public function upload(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'fileUpload' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust file types and size as needed
+            'property_id' => 'required|exists:properties,id'
+        ]);
+
+        // Handle file upload
+        if ($request->hasFile('fileUpload')) {
+            $file = $request->file('fileUpload');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('uploads', $fileName, 'public');
+
+            // Save the file path to the database
+            $propertyDocument = new PropertyDocument();
+            $propertyDocument->property_id = $request->property_id;
+            $propertyDocument->document_path = $filePath;
+            $propertyDocument->save();
+
+            return response()->json(['message' => 'File uploaded successfully', 'document_path' => $filePath, 'document' => $propertyDocument], 200);
+        }
+
+        return response()->json(['message' => 'File upload failed'], 400);
+    }
+
+    public function deleteDocument(Request $request, $id)
+    {
+        $document = PropertyDocument::findOrFail($id);
+        // Delete the document
+        $document->delete();
+
+        // You might return a response here if needed
+        return response()->json(['message' => 'Document deleted successfully']);
     }
 }
