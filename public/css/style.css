@@ -1287,6 +1287,53 @@ title {
     text-transform: uppercase;
     border: none;
 }
+.dataTables_length,
+.dataTables_filter {
+margin-bottom: 20px;
+}
+#clients-management_wrapper {
+    padding: 20px;
+    border-radius: 10px;
+    background: linear-gradient(121deg, #FFF 10.96%, #FFF 72%, #FFF 99.98%);
+    box-shadow: 0px 5px 60px 5px rgba(0, 51, 85, 0.10);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.dataTables_wrapper .dataTables_filter input:focus {
+    box-shadow: none;
+    border: none;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+        background-color: #4DA6FF;
+        color: #ffffff !important;
+}
+.table-responsive table tbody td {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    color: #AAAAAA;
+    vertical-align: middle;
+    padding: 16px 20px;
+    border-color: #DDDDDD;
+}
+.table-responsive table thead {
+    border-radius: 10px;
+}
+.table-responsive table thead th {
+    background-color: #389BFE;
+    padding: 20px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 400;
+    border-bottom: 1px solid #389BFE;
+    vertical-align: middle;
+}
+.table-responsive table thead th:first-child {
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
 
 /* Responsive Css Start */
 
@@ -1295,7 +1342,15 @@ title {
         flex: 0 0 60%;
     }
 }
-
+@media screen and (max-width: 1540px) {
+    .body-chat-message-user {
+        height: 360px;
+    }
+.content-chat-message-user {
+    width: 100%;
+    height: calc(100vh - 15vh);
+}
+}
 @media screen and (min-width: 992px) {
     .app-sidebar #close { 
         display: none;

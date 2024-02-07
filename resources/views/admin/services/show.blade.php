@@ -143,73 +143,61 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="body-chat-message-user">
-                    <div class="chat-active">
-                        <h4>08/11/2023 11:00 AM</h4>
+                    <!-- Chat Messages Container -->
+                    <div class="body-chat-message-user">
+                        @foreach ($messages as $message)
+                            <div class="chat-active">
+                                <h4>{{ $message->created_at->format('m/d/Y h:i A') }}</h4>
+                            </div>
+                            <div class="message-user-left">
+                                <div class="message-user-profile">
+                                    <img src="{{ URL::asset('img/logo/logo.svg') }}">
+                                </div>
+                                <div class="message-user-left-text">
+                                    <!-- Display message content here -->
+                                    <p>{{ $message->content }}</p>
+                                    <span class="time">{{ $message->created_at->diffForHumans() }}</span>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="message-user-left">
-                        <div class="message-user-profile">
-                            <img src="{{ URL::asset('img/logo/logo.svg') }}">
-                        </div>
-                        <div class="message-user-left-text">
-                            <img src="{{ URL::asset('img/home/Group.png') }}" />
-                            <p>Lorem ipsum dolor?</p>
-                            <span class="time">4 days ago</span>
-                        </div>
-                    </div>
-                    <div class="message-user-right">
-                        <div class="message-user-profile">
-                            <img src="{{ URL::asset('img/logo/logo.svg') }}">
-                        </div>
-                        <div class="message-user-right-text">
-                            <p>Hey! Okay.</p>
-                            <span class="time">4 days ago</span>
-                        </div>
-                    </div>
-                    <div class="chat-status">
-                        <h4><strong>Company</strong> Changed Status <strong>Done</strong></h4>
-                    </div>
-                </div>
-                <div class="footer-chat-message-user">
-                    <div class="message-user-send">
-                        <div class="action-left-button">
-                            <a href="#">
-                                <i class="fa-light fa-image"></i>
-                            </a>
-                            <a href="#">
-                                <i class="fa-light fa-plus"></i>
-                            </a>
-                        </div>
-                        <input type="text" placeholder="Type a message here..." class="form-control">
-                        <div class="action-right-button">
-                            <a href="#">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none">
-                                    <circle cx="12" cy="12" r="10.75" stroke="#707C97"
-                                        stroke-opacity="0.5" stroke-width="2.5" />
-                                    <path
-                                        d="M7.63623 13.6367C8.45635 15.2574 10.1026 16.364 11.9999 16.364C13.8971 16.364 15.5434 15.2574 16.3635 13.6367"
-                                        stroke="#707C97" stroke-opacity="0.5" stroke-width="2.5"
-                                        stroke-linecap="round" />
-                                    <circle cx="8.72714" cy="8.72763" r="1.09091" fill="#707C97"
-                                        fill-opacity="0.5" />
-                                    <circle cx="15.2725" cy="8.72763" r="1.09091" fill="#707C97"
-                                        fill-opacity="0.5" />
-                                </svg>
-                            </a>
-                            <a href="#">
-                                <i class="fa-solid fa-paper-plane"></i>
-                            </a>
 
-                        </div>
+                    <!-- Chat Footer -->
+                    <div class="footer-chat-message-user">
+                        <form action="" method="POST">
+                            @csrf
+                            <div class="message-user-send">
+                                <div class="action-left-button">
+                                    <a href="#">
+                                        <i class="fa-light fa-image"></i>
+                                    </a>
+                                    <a href="#">
+                                        <i class="fa-light fa-plus"></i>
+                                    </a>
+                                </div>
+                                <input type="text" name="message" id="message-input"
+                                    placeholder="Type a message here..." class="form-control">
+                                <div class="action-right-button">
+                                    <a href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none">
+                                            <!-- Your SVG Icon -->
+                                        </svg>
+                                    </a>
+                                    <button type="submit" id="send-message-btn">
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
+
+
             </div>
-    </div>
-    </section>
+        </section>
 
-    <!-- Work Progress section end -->
+        <!-- Work Progress section end -->
 
     </div>
 
@@ -218,7 +206,27 @@
 @section('page_scripts')
     <script>
         $(document).ready(function() {
-
+            // Handle sending messages
+            $('#send-message-btn').click(function(e) {
+                e.preventDefault();
+                var message = $('#message-input').val();
+                if (message.trim() !== '') {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/send-message', // Define your route
+                        data: {
+                            message: message
+                        },
+                        success: function(response) {
+                            // Handle success response
+                            // You may update the chat interface with the new message
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle error response
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endsection

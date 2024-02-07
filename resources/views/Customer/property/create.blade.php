@@ -5,6 +5,7 @@
 @section('content')
     <!-- dashboard screen start -->
     <aside class="app-sidebar">
+
         <div id="close"><a href="javascript:void(0)"><i class="fa-regular fa-xmark"></i></a></div>
         <div class="profile-header">
             <a href="#"><img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user" /></a>
@@ -116,10 +117,10 @@
                 <h2>Add Property</h2>
             </div>
             <div class="right-content">
-                <form class="search-property position-relative me-3" action="" id="">
+                {{-- <form class="search-property position-relative me-3" action="" id="">
                     <input type="text" placeholder="Search Property..." class="form-control" />
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
-                </form>
+                </form> --}}
                 <div class="action-button">
                     <a href="#" class="me-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"

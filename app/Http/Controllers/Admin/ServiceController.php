@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Property;
+use App\Models\Chat;
 
 class ServiceController extends Controller
 {
@@ -41,7 +42,8 @@ class ServiceController extends Controller
         $service = Service::findOrFail($serviceId);
         $property = Property::findOrFail($propertyId);
         $services = $property->services()->get();
-        return view('admin.services.show', compact('service', 'property', 'services'));
+        $messages = Chat::orderBy('created_at', 'asc')->get();
+        return view('admin.services.show', compact('service', 'property', 'services', 'messages'));
     }
 
     /**
