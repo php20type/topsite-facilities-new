@@ -66,6 +66,7 @@ class PropertyController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
             'address1' => 'required|string',
             'address2' => 'nullable|string',
             'bedrooms' => 'nullable|integer',
@@ -125,7 +126,7 @@ class PropertyController extends Controller
      */
     public function show($id)
     {
-        $property = Property::with('propertyType', 'propertyMedia')->find($id);
+        $property = Property::with('propertyType', 'propertyMedia', 'propertyDocument')->find($id);
         $indoorMedia = $property->propertyMedia()->where('category', 'indoor')->take(1)->get();
         $outdoorMedia = $property->propertyMedia()->where('category', 'outdoor')->take(1)->get();
 

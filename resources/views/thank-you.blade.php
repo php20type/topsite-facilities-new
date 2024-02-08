@@ -29,8 +29,8 @@
     <div class="login-section thank-you">
         <div class="login_content-form-sec">
             <div class="login_header text-center">
-                <h1>Thank you !</h1>
-                <p>Thanks for subscribing to our news letter. </p>
+                <h1>Thank you subscribing!</h1>
+                <p>please wait until your account gets verified </p>
                 <a href="javascript:void(0)"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                     class="go-home">Go Home</a>

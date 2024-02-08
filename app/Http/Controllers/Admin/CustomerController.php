@@ -104,19 +104,17 @@ class CustomerController extends Controller
         $isApprov = $request->input('isApprov');
 
         $user = User::findOrFail($userId);
-        $user->is_approve = $isApprov;
-        $user->save();
+        // $user->is_approve = $isApprov;
+        // $user->save();
 
         $recipientEmail = $user->email;
         $email_subject = "hello";
 
-        Mail::send('emails.customer_approve_email', $recipientEmail, function ($message, $recipientEmail, $email_subject) {
+        Mail::send('emails.customer_approve_email', ['recipientEmail' => $recipientEmail, 'email_subject' => $email_subject], function ($message) use ($recipientEmail, $email_subject) {
             $message->to($recipientEmail, 'topside')
                 ->subject($email_subject);
             $message->from('topside@gmail.com', 'Alex');
-
         });
-        echo "Successfully sent the email";
 
         // Mail::to($recipientEmail)->send(new CustomerApproveEmail());
 

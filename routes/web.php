@@ -25,9 +25,9 @@ Route::get('/login/user', [LoginController::class, 'showUserLoginForm']);
 Route::get('/register/user', [RegisterController::class, 'showUserRegisterForm']);
 
 Route::post('/login/admin', [LoginController::class, 'adminLogin']);
-Route::post('/login/user', [LoginController::class, 'userLogin']);
+Route::post('/login/user', [LoginController::class, 'userLogin'])->name('login.user');
 Route::post('/register/admin', [RegisterController::class, 'createAdmin']);
-Route::post('/register/user', [RegisterController::class, 'createUser']);
+Route::post('/register/user', [RegisterController::class, 'createUser'])->name('register');
 
 Route::view('/home', 'home')->middleware('auth');
 Route::view('admin', '/admin/customer/list');

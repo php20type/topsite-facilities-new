@@ -22,6 +22,17 @@
        </div>
    </div>
    <div class="col-lg-12">
+        <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
+            {{ Form::textarea('description', null, ['class' => 'form-control', 'placeholder' => 'Enter description', 'id' => 'description', 'rows' => 3]) }}
+            {{ Form::label('description', 'Description', ['class' => 'lab-style']) }}
+            @if ($errors->has('description'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('description') }}</strong>
+                </span>
+            @endif
+        </div>
+    </div>
+   <div class="col-lg-12">
        <div class="form-group">
            {{ Form::text('address1', null, ['class' => 'form-control mb-3', 'placeholder' => 'Address Line Comes Here 123,']) }}
            {{ Form::label('address1', 'Address 1', ['class' => 'lab-style']) }}
@@ -162,20 +173,24 @@
    </div>
 
    <div class="col-lg-12">
-       <div class="form-group{{ $errors->has('property_service_id') ? ' has-error' : '' }}">
-           {{ Form::select('property_service_id[]', $services, null, ['class' => 'form-select fa', 'aria-label' => 'Default select example', 'multiple' => 'multiple']) }}
-           {{ Form::label('property_service_id', 'Property Service', ['class' => 'lab-style']) }}
-           @if ($errors->has('property_service_id'))
-               <span class="help-block">
-                   <strong>{{ $errors->first('property_service_id') }}</strong>
-               </span>
-           @endif
-       </div>
-   </div>
+    <div class="form-group{{ $errors->has('property_service_id') ? ' has-error' : '' }}">
+        {{ Form::select('property_service_id[]', $services, null, ['class' => 'form-select', 'id' => 'property_multiselect' , 'aria-label' => 'Default select example', 'multiple' => 'multiple']) }}
+        {{ Form::label('property_service_id', 'Property Service', ['class' => 'lab-style']) }}
+        @if ($errors->has('property_service_id'))
+            <span class="help-block">
+                <strong>{{ $errors->first('property_service_id') }}</strong>
+            </span>
+        @endif
+    </div>
+</div>
 
 
    @section('page_scripts')
        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#property_multiselect').select2();
+            });
+
            function toggleAmenitiesFields(propertyType) {
 
                if (propertyType === '1') {

@@ -315,6 +315,7 @@
                                         </div>
                                     </label>
                                 </form>
+                                @if($property->propertyDocument == null)
                                 @foreach ($property->propertyDocument as $document)
                                     <div class="BodyInnerSec">
                                         <div class="PaperWork">
@@ -331,6 +332,9 @@
                                         </div>
                                     </div>
                                 @endforeach
+                                @else
+                                    <div class="BodyInnerSec"></div>
+                                @endif
                             </div>
                         </div>
 
@@ -467,6 +471,7 @@
                     $('.BodyInnerSec:last').after(newDocument);
                     // Clear the file input field
                     $('#file-upload').val('');
+                    toastr.success('Document uploaded successfully!', 'Success', { positionClass: 'toast-top-right' });
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
@@ -489,6 +494,7 @@
                 },
                 success: function(response) {
                     // Remove the document entry from the DOM
+                    toastr.error('Document deleted successfully!', 'Delete', { positionClass: 'toast-top-right' });
                     documentEntry.remove();
                 },
                 error: function(xhr, status, error) {

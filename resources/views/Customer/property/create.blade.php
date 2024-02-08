@@ -1,7 +1,6 @@
 @extends('layouts.app', [
     'title' => 'Topside Facilities Management - property',
 ])
-
 @section('content')
     <!-- dashboard screen start -->
     <aside class="app-sidebar">
@@ -177,4 +176,4 @@
             // Close all dropdowns with the 'form-select' class
             $('.form-select').selectpicker('toggle');
         });
-    @endsection
+@endsection

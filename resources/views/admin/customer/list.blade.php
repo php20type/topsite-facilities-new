@@ -137,11 +137,11 @@
 
                                         @if ($property)
                                             <td>
-                                                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="14"
+                                                {{-- <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="14"
                                                     height="14" viewBox="0 0 14 14" fill="none">
                                                     <circle cx="7" cy="7" r="7" fill="#38D06B" />
-                                                </svg>
-                                                {{ $property->name }}
+                                                </svg> --}}
+                                            <a href="{{ route('admin.property.details', ['id' => $property->id]) }}" class="property-link">{{ $property->name }}</a>
                                             </td>
                                         @else
                                             <td>

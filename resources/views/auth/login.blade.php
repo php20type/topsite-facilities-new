@@ -9,7 +9,7 @@
             <div class="login_header text-center">
                 <img src="{{ URL::asset('img/logo/logo.svg') }}" alt="logo">
                 <h2 class="card-header"> {{ isset($url) ? ucwords($url) : '' }} {{ __('Login') }}</h2>
-                <p>Need an account? <span><a href="#">Get started!</a></span></p>
+                @if ($url != 'admin') <p>Need an account? <span><a href="{{ route('register') }}">Get started!</a></span></p> @endif
             </div>
             @if ($errors->has('error'))
                 <div class="alert alert-danger">
