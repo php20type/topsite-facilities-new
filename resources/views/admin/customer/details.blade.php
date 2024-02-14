@@ -73,10 +73,7 @@
                 <div class="Inventorysection">
                     <div class="section-header mb-3">
                         <h4>Inventory</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tristique faucibus imperdiet.
-                            Pellentesque purus enim, malesuada eu lacinia ultrices, fermentum vitae ante. Fusce
-                            dignissim at metus eu sodales. Mauris vestibulum aliquam fringilla. Quisque congue, nunc
-                            cursus tempor faucibus, nibh sapien pulvinar eros, sit amet luctus enim augue sit amet ante.
+                        <p>{{ $property->description }}
                         </p>
                     </div>
                     <div class="InventoryDetails">
@@ -206,32 +203,35 @@
                         </ul>
                     </div>
                     <div class="InventoryImages">
-                        @foreach ($indoorMedia as $media)
+                      @foreach ($indoorMedia as $media)
                             <div class="indoor_media">
-                                @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
-                                    <video controls class="img-fluid">
-                                        <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                @else
-                                    <a href="#" class="img-fluid">
-                                        <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
-                                    </a>
-                                @endif
+                                <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
+                                    @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
+                                        <video controls class="img-fluid">
+                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    @else
+                                        <img src="{{ asset('storage/' . $media->file_path) }}" alt="" class="img-fluid">
+                                    @endif
+                                </a>
                             </div>
                         @endforeach
+
                         @foreach ($outdoorMedia as $media)
                             <div class="outdoor_media">
-                                @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
-                                    <video controls class="img-fluid">
-                                        <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                @else
-                                    <a href="#" class="img-fluid">
-                                        <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
-                                    </a>
-                                @endif
+                                <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
+                                    @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
+                                        <video controls class="img-fluid">
+                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    @else
+                                        <a href="#" class="img-fluid">
+                                            <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
+                                        </a>
+                                    @endif
+                                </a>    
                             </div>
                         @endforeach
                     </div>
@@ -403,18 +403,123 @@
                 }
             });
         });
+        
+        $("input[name='switchPlan']").change(function() {
+             $('#loadMoreButton').hide();
+            if ($("#switchIndoor").is(":checked")) {
+                $(".indoor_media").show();
+                $(".outdoor_media").hide();
+
+                var property_id = this.dataset.property_id;
+                var page = $('#indoor_page');
+
+                $.ajax({
+                    url: '/user/fetch-more-media',
+                    method: 'GET',
+                    data: {
+                        category: 'indoor',
+                        property: this.property_id,
+                        page: page.val(),
+                    },
+                    success: function(response) {
+                        if (response.status === 'no_more_media' || response.status === 'not_found') {
+                            $('#loadMoreButton').hide();
+                        } else {
+                            $('#loadMoreButton').show();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });        
+            } else {
+                $(".indoor_media").hide();
+                $(".outdoor_media").show();
+
+                var property_id = this.dataset.property_id;
+                var page = $('#outdoor_page');
+
+                $.ajax({
+                    url: '/user/fetch-more-media',
+                    method: 'GET',
+                    data: {
+                        category: 'outdoor',
+                        property: this.property_id,
+                        page: page.val(),
+                    },
+                    success: function(response) {
+                        if (response.status === 'no_more_media' || response.status === 'not_found') {
+                            $('#loadMoreButton').hide();
+                        } else {
+                            $('#loadMoreButton').show();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });    
+            }
+        });
+
+        document.getElementById('loadMoreButton').addEventListener('click', function() {
+            if ($("#switchIndoor").is(":checked")) {
+                var category = 'indoor';
+            } else {
+                var category = 'outdoor';
+            }
+
+            var property_id = this.dataset.property_id;
+            var page = category === 'indoor' ? $('#indoor_page') : $('#outdoor_page');
+
+            $.ajax({
+                url: '/user/fetch-more-media',
+                method: 'GET',
+                data: {
+                    category: category,
+                    property: this.dataset.property_id,
+                    page: page.val(),
+                },
+                success: function(response) {
+                    if (response.status === 'no_more_media' || response.status === 'not_found') {
+                        $('#loadMoreButton').hide();
+                    }
+
+                    var nextPage = parseInt(page.val()) + 1;
+                    page.val(nextPage);
+
+                    var mediaContainer = category === 'indoor' ? $('.indoor_media') : $('.outdoor_media');
+                    
+                    // Check if the response data is an array
+                    if (Array.isArray(response.data)) {
+                        response.data.forEach(function(media) {
+                            var mediaElement = createMediaElement(media);
+                            mediaContainer.append(mediaElement);
+                        });
+                    } else {
+                        // Handle single media response
+                        var mediaElement = createMediaElement(response.data);
+                        mediaContainer.append(mediaElement);
+                    }
+                },
+
+                error: function(error) {
+                    console.error(error);
+                }
+            });
+        });
 
         function createMediaElement(media) {
             var isVideo = /\.(mp4|mov)$/i.test(media.file_path);
             var mediaPath = assetUrl + 'storage/' + media.file_path;
 
-            if (isVideo) {
-                return $('<div class="video_media"><video controls class="img-fluid"><source src="' + mediaPath +
-                    '" type="video/mp4">Your browser does not support the video tag.</video></div>');
+           if (isVideo) {
+                return $('<div class="video_media"><a href="' + mediaPath + '" target="_blank class="media-link"><video controls class="img-fluid"><source src="' + mediaPath +
+                    '" type="video/mp4">Your browser does not support the video tag.</video></a></div>');
             } else {
-                return $('<div class="image_media"><a href="#" class="img-fluid"><img src="' + mediaPath +
+                return $('<div class="image_media"><a href="' + mediaPath + '" target="_blank class="media-link img-fluid"><img src="' + mediaPath +
                     '" alt=""></a></div>');
             }
+
         }
 
         $("#file-upload-btn").click(function() {

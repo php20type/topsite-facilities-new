@@ -80,7 +80,7 @@
         <section class="WorkProgress">
             <div class="container-fluid">
                 <div class="back mb-3">
-                    <a href="{{ route('admin.property.details', ['id' => $property->id]) }}">
+                    <a href="{{ route('user.property.show', ['property' => $property->id]) }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="12" viewBox="0 0 21 12"
                             fill="none">
                             <path

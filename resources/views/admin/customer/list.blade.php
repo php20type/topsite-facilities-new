@@ -170,18 +170,16 @@
         $(document).ready(function() {
             var dataTable = $('#clients-management').DataTable({
                 select: false,
-                columnDefs: [{
-                    className: 'Name',
-                    visible: false,
-                    searchable: false
-                }]
+                columnDefs: [
+                    {
+                        targets: [1, 2, 3, 4], // Targeting Property(1), Property(2), Property(3), and Property(4) columns
+                        orderable: false // Disable sorting for Property columns
+                    }
+                ]
             });
-
-            // Add keyup event listener to the search input
-            document.getElementById('search-property-input').addEventListener('keyup', function() {
+             document.getElementById('search-property-input').addEventListener('keyup', function() {
                 dataTable.search($(this).val()).draw();
             });
-
         });
     </script>
 @endsection

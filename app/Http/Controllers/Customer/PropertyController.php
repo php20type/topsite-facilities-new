@@ -154,7 +154,28 @@ class PropertyController extends Controller
             }
         })->skip(($page - 1) * $perPage)->take($perPage)->get();
 
-        return response()->json($moreMedia);
+        if ($moreMedia->isEmpty()) {
+            return response()->json(['status' => 'not_found', 'data' => []]);
+        } else {
+
+            $page_new = $page;
+            $page_new++;
+            $moreMed = PropertyMedia::where(function ($query) use ($category, $property_id) {
+                if (!empty($category)) {
+                    $query->where('category', $category);
+                }
+
+                if (!empty($property_id)) {
+                    $query->where('property_id', $property_id);
+                }
+            })->skip(($page_new - 1) * $perPage)->take($perPage)->get();
+
+            if ($moreMed->isEmpty()) {
+                return response()->json(['status' => 'no_more_media', 'data' => $moreMedia]);
+            } else {
+                return response()->json(['status' => 'find_media', 'data' => $moreMedia]);
+            }
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Models\Property;
 use App\Models\PropertyDocument;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomerApproveEmail;
+use Carbon\Carbon;
 
 use App\Models\User;
 
@@ -101,11 +102,12 @@ class CustomerController extends Controller
     public function updateStatus(Request $request)
     {
         $userId = $request->input('userId');
-        $isApprov = $request->input('isApprov');
+        $isApprove = $request->input('isApprov');
 
         $user = User::findOrFail($userId);
-        // $user->is_approve = $isApprov;
-        // $user->save();
+        $user->is_approve = $isApprove;
+        $user->approve_at = Carbon::now();
+        $user->save();
 
         $recipientEmail = $user->email;
         $email_subject = "hello";

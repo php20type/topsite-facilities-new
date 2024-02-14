@@ -1451,3 +1451,20 @@ margin-bottom: 20px;
      text-transform: capitalize;
      box-shadow: 0 10px 16px 1px rgba(174, 199, 251, 1);
  }
+
+ /* Position the close button */
+.close-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Ensure the close button appears above the media element */
+}
+
+/* Style the container */
+.media-container {
+    position: relative; /* Position the close button relative to the container */
+    display: inline-block; /* Ensure containers are displayed inline */
+    margin-right: 10px; /* Adjust as needed */
+    margin-bottom: 10px; /* Adjust as needed */
+}
+

@@ -105,6 +105,38 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <table id="customer-list" class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Date of Approve</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($requests as $request)
+                                <tr>
+                                    <td>
+                                        <div class="profile-box">
+
+                                            <div class="user-name">
+                                                <a href="{{ route('admin.customer.show', ['customer' => $request->id]) }}">
+                                                    {{ $request->name }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        Approve
+                                    </td>
+                                    <td> -
+                                    </td>   
+
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </section>
@@ -125,7 +157,15 @@
                 "searchable": false
             }]
         });
+        var customerListTable = $('#customer-list').DataTable({
+            select: false,
+            "columnDefs": [{
+                className: "Name",
 
+                "visible": false,
+                "searchable": false
+            }]
+        });
         $(document).ready(function() {
             $('.check-button').on('click', function(e) {
                 e.preventDefault();

@@ -14,7 +14,8 @@ class RequestController extends Controller
      */
     public function index()
     {
-        $users = User::whereNull('email_verified_at')->where('is_approve', 0)->get();
-        return view('admin.request.list', compact('users'));
+        $users = User::where('is_approve', 0)->get();
+        $requests = User::where('is_approve', 1)->get();
+        return view('admin.request.list', compact('users', 'requests'));
     }
 }

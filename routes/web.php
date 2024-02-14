@@ -17,7 +17,7 @@ use App\Http\Controllers\Admin\ServiceController;
 |
 */
 
-Route::view('/', 'welcome');
+Route::view('/', 'auth.login', ['url' => 'user']);
 Auth::routes(['verify' => true]);
 
 Route::get('/login/admin', [LoginController::class, 'showAdminLoginForm']);
@@ -44,7 +44,6 @@ Route::middleware('auth:admin')->group(function () {
 });
 
 // Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
-
 
 Route::group(['prefix' => 'user', 'namespace' => 'App\Http\Controllers\Customer'], function () {
     Route::resource('property', 'PropertyController')->names('user.property');

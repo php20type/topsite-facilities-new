@@ -164,10 +164,7 @@
                 <div class="Inventorysection">
                     <div class="section-header mb-3">
                         <h4>Inventory</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla tristique faucibus imperdiet.
-                            Pellentesque purus enim, malesuada eu lacinia ultrices, fermentum vitae ante. Fusce
-                            dignissim at metus eu sodales. Mauris vestibulum aliquam fringilla. Quisque congue, nunc
-                            cursus tempor faucibus, nibh sapien pulvinar eros, sit amet luctus enim augue sit amet ante.
+                        <p>{{ $property->description }}
                         </p>
                     </div>
                     <div class="InventoryDetails">
@@ -299,34 +296,38 @@
                     <div class="InventoryImages">
                         @foreach ($indoorMedia as $media)
                             <div class="indoor_media">
-                                @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
-                                    <video controls class="img-fluid">
-                                        <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                @else
-                                    <a href="#" class="img-fluid">
-                                        <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
-                                    </a>
-                                @endif
-                                <button class="delete-media position-absolute top-0 start-0 m-2"
-                                    data-media-id="{{ $media->id }}">Delete</button>
+                                <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
+                                    @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
+                                        <video controls class="img-fluid">
+                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    @else
+                                        <a href="#" class="img-fluid">
+                                            <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
+                                        </a>
+                                    @endif
+                                    <button class="delete-media position-absolute top-0 mt-3 start-0 m-2"
+                                        data-media-id="{{ $media->id }}">Delete</button>
+                                </a>        
                             </div>
                         @endforeach
                         @foreach ($outdoorMedia as $media)
                             <div class="outdoor_media">
-                                @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
-                                    <video controls class="img-fluid">
-                                        <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                @else
-                                    <a href="#" class="img-fluid">
-                                        <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
-                                    </a>
-                                @endif
-                                <button class="delete-media position-absolute top-0 start-0 m-2"
-                                    data-media-id="{{ $media->id }}">Delete</button>
+                                <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
+                                    @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
+                                        <video controls class="img-fluid">
+                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    @else
+                                        <a href="#" class="img-fluid">
+                                            <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
+                                        </a>
+                                    @endif
+                                    <button class="delete-media position-absolute top-0 mt-3 start-0"
+                                        data-media-id="{{ $media->id }}">Delete</button>
+                                </a>        
                             </div>
                         @endforeach
                     </div>
@@ -335,8 +336,8 @@
                     <div class="Bottom-action-sec">
                         <div class="switches-container">
                             <input type="radio" id="switchIndoor" name="switchPlan" value="Indoor"
-                                checked="checked" />
-                            <input type="radio" id="switchOutdoor" name="switchPlan" value="Outdoor" />
+                                checked="checked" data-property_id="{{ $property->id }}"/>
+                            <input type="radio" id="switchOutdoor" name="switchPlan" value="Outdoor" data-property_id="{{ $property->id }}"/>
                             <label for="switchIndoor">Indoor</label>
                             <label for="switchOutdoor">Outdoor</label>
                             <div class="switch-wrapper">
@@ -451,9 +452,55 @@
             if ($("#switchIndoor").is(":checked")) {
                 $(".indoor_media").show();
                 $(".outdoor_media").hide();
+
+                var property_id = this.dataset.property_id;
+                var page = $('#indoor_page');
+
+                $.ajax({
+                    url: '/user/fetch-more-media',
+                    method: 'GET',
+                    data: {
+                        category: 'indoor',
+                        property: this.property_id,
+                        page: page.val(),
+                    },
+                    success: function(response) {
+                        if (response.status === 'no_more_media' || response.status === 'not_found') {
+                            $('#loadMoreButton').hide();
+                        } else {
+                            $('#loadMoreButton').show();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });        
             } else {
                 $(".indoor_media").hide();
                 $(".outdoor_media").show();
+
+                var property_id = this.dataset.property_id;
+                var page = $('#outdoor_page');
+
+                $.ajax({
+                    url: '/user/fetch-more-media',
+                    method: 'GET',
+                    data: {
+                        category: 'outdoor',
+                        property: this.property_id,
+                        page: page.val(),
+                    },
+                    success: function(response) {
+                        if (response.status === 'no_more_media' || response.status === 'not_found') {
+                            $('#loadMoreButton').hide();
+                        } else {
+                            $('#loadMoreButton').show();
+                        }
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });    
             }
         });
 
@@ -476,44 +523,50 @@
                     page: page.val(),
                 },
                 success: function(response) {
-
-                    if (category == 'indoor') {
-                        var nextPage = parseInt(page.val()) + 1;
-                        document.getElementById('indoor_page').value = nextPage;
-                    } else {
-                        var nextPage = parseInt(page.val()) + 1;
-                        document.getElementById('outdoor_page').value = nextPage;
+                    if (response.status === 'no_more_media' || response.status === 'not_found') {
+                        $('#loadMoreButton').hide();
                     }
 
-                    var mediaContainer = category === 'indoor' ? $('.indoor_media') : $(
-                        '.outdoor_media');
+                    var nextPage = parseInt(page.val()) + 1;
+                    page.val(nextPage);
 
-                    response.forEach(function(media) {
-                        var mediaElement = createMediaElement(media);
+                    var mediaContainer = category === 'indoor' ? $('.indoor_media') : $('.outdoor_media');
+                    
+                    // Check if the response data is an array
+                    if (Array.isArray(response.data)) {
+                        response.data.forEach(function(media) {
+                            var mediaElement = createMediaElement(media,category);
+                            mediaContainer.append(mediaElement);
+                        });
+                    } else {
+                        // Handle single media response
+                        var mediaElement = createMediaElement(response.data , category);
                         mediaContainer.append(mediaElement);
-                    });
+                    }
                 },
+
                 error: function(error) {
                     console.error(error);
                 }
             });
         });
 
-        function createMediaElement(media) {
+        function createMediaElement(media,category) {
+
             var isVideo = /\.(mp4|mov)$/i.test(media.file_path);
             var mediaPath = assetUrl + 'storage/' + media.file_path;
             var $mediaElement;
-
+            
             if (isVideo) {
-                $mediaElement = $('<div class="video_media"><video controls class="img-fluid"><source src="' + mediaPath +
-                    '" type="video/mp4">Your browser does not support the video tag.</video></div>');
+                $mediaElement = $('<div class="media-container"><a href="' + mediaPath + '" target="_blank" class="media-link"><video controls class="img-fluid"><source src="' + mediaPath +
+                    '" type="video/mp4">Your browser does not support the video tag.</video></a></div>');
             } else {
-                $mediaElement = $('<div class="image_media"><a href="#" class="img-fluid"><img src="' + mediaPath +
+                $mediaElement = $('<div class="media-container"><a href="' + mediaPath + '" target="_blank" class="media-link"><a href="#" class="img-fluid"><img src="' + mediaPath +
                     '" alt=""></a></div>');
             }
 
             // Append the delete button
-            var $deleteButton = $('<button class="delete-media" data-media-id="' + media.id + '">Delete</button>');
+            var $deleteButton = $('<button class="delete-media close-button" data-media-id="' + media.id + '">Delete</button>');
 
             // Append the delete button to the media element
             $mediaElement.append($deleteButton);
