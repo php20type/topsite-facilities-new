@@ -110,7 +110,7 @@ class CustomerController extends Controller
         $user->save();
 
         $recipientEmail = $user->email;
-        $email_subject = "hello";
+        $email_subject = "Customer Approve Email From topeside";
 
         Mail::send('emails.customer_approve_email', ['recipientEmail' => $recipientEmail, 'email_subject' => $email_subject], function ($message) use ($recipientEmail, $email_subject) {
             $message->to($recipientEmail, 'topside')

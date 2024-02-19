@@ -20,7 +20,7 @@
     <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-
+    @yield('page_style')
     <!-- Custom Styles -->
     <link rel="stylesheet" type="text/css" href="{{ URL::asset('css/style.css') }}" />
     <body>

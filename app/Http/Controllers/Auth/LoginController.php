@@ -7,6 +7,8 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Models\Admin;
 
 class LoginController extends Controller
 {
@@ -54,6 +56,10 @@ class LoginController extends Controller
             'password' => 'required|min:6'
         ]);
         if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+            $token = md5(uniqid());
+            Admin::where('id', Auth::guard('admin')->user()->id)->update([
+                'token' => $token
+            ]);
             return redirect()->route('admin.customer.index');
         } else {
             // Login attempt failed
@@ -78,6 +84,10 @@ class LoginController extends Controller
 
         if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
             if (Auth::guard('user')->user()->email_verified_at !== null) {
+                $token = md5(uniqid());
+                User::where('id', Auth::guard('user')->user()->id)->update([
+                    'token' => $token
+                ]);
                 return redirect()->route('user.property.index');
             } else {
                 return redirect('/thank-you');
