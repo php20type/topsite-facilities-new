@@ -12,14 +12,14 @@
    </div>
    <div class="col-lg-6">
        <div class="form-group{{ $errors->has('property_type_id') ? ' has-error' : '' }}">
-           {{ Form::select('property_type_id', $types, 1, ['class' => 'fa form-select', 'id' => 'Property', 'aria-label' => 'Default select example']) }}
-           {{ Form::label('property_type_id', 'Property Type', ['class' => 'lab-style']) }}
-           @if ($errors->has('property_type_id'))
-               <span class="help-block">
-                   <strong>{{ $errors->first('property_type_id') }}</strong>
-               </span>
-           @endif
-       </div>
+            {{ Form::select('property_type_id', $types, isset($property) ? $property->property_type_id : null, ['class' => 'fa form-select', 'id' => 'Property', 'aria-label' => 'Default select example']) }}
+            {{ Form::label('property_type_id', 'Property Type', ['class' => 'lab-style']) }}
+            @if ($errors->has('property_type_id'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('property_type_id') }}</strong>
+                </span>
+            @endif
+        </div>
    </div>
    <div class="col-lg-12">
         <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
@@ -172,16 +172,21 @@
 
    </div>
 
-   <div class="col-lg-12">
-    <div class="form-group{{ $errors->has('property_service_id') ? ' has-error' : '' }}">
-        {{ Form::select('property_service_id[]', $services, null, ['class' => 'form-select', 'id' => 'property_multiselect' , 'aria-label' => 'Default select example', 'multiple' => 'multiple']) }}
-        {{ Form::label('property_service_id', 'Property Service', ['class' => 'lab-style']) }}
-        @if ($errors->has('property_service_id'))
-            <span class="help-block">
-                <strong>{{ $errors->first('property_service_id') }}</strong>
-            </span>
-        @endif
+   @php
+    $propertyServices = isset($property) ? $property->services->pluck('id')->toArray() : null;
+    @endphp
+    <div class="col-lg-12">
+        <div class="form-group{{ $errors->has('property_service_id') ? ' has-error' : '' }}">
+            {{ Form::select('property_service_id[]', $services, $propertyServices, ['class' => 'form-select', 'id' => 'property_multiselect' , 'aria-label' => 'Default select example', 'multiple' => 'multiple']) }}
+            {{ Form::label('property_service_id', 'Property Service', ['class' => 'lab-style']) }}
+            @if ($errors->has('property_service_id'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('property_service_id') }}</strong>
+                </span>
+            @endif
+        </div>
     </div>
+
 </div>
 
 

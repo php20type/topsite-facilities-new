@@ -43,7 +43,7 @@
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </a>
-                    <a href="#">
+                    <a href="{{ route('admin.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
                             fill="none">
                             <rect width="48.0001" height="48" rx="10" fill="#389BFE" />
@@ -129,7 +129,8 @@
                                     <td>
                                         Approve
                                     </td>
-                                    <td> -
+                                    <td> 
+                                        {{ \Carbon\Carbon::parse($request->approve_at)->format('F j, Y g:i A') }}
                                     </td>   
 
                                 </tr>

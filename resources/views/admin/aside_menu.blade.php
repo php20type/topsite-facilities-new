@@ -5,7 +5,7 @@
     </div>
     <nav class="sidebar-nav">
         <ul class="list-inline">
-            <li class="{{ request()->is('admin/customer*') ? 'active' : '' }}">
+            <li class="{{ request()->is('customer*') ? 'active' : '' }}">
                 <a href="{{ route('admin.customer.index') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
                         fill="none">
@@ -26,7 +26,7 @@
                     Customer List
                 </a>
             </li>
-            <li class="{{ request()->is('admin/request') ? 'active' : '' }}">
+            <li class="{{ request()->is('request') ? 'active' : '' }}">
                 <a href="{{ route('admin.request') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="20" viewBox="0 0 27 20"
                         fill="none">
@@ -63,7 +63,7 @@
                 </a>
             </li>
             <li class="">
-                <a href="javascript:void(0)"
+                <a href="javascript:void(0);"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
                         fill="none">
@@ -81,7 +81,7 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    logout
+                    Logout
                 </a>
                 <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
                     {{ csrf_field() }}

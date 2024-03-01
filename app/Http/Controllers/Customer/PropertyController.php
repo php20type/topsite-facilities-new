@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Auth;
 
 class PropertyController extends Controller
 {
+    public function __construct()
+    {
+        if (Auth::user() == null) {
+            $this->middleware('auth');
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +27,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Property::with('propertyType')->where('user_id', auth('user')->user()->id)->orderBy('created_at', 'desc')->get();
+        $properties = Property::with('propertyType')->where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
         return view('customer.property.list', compact('properties'));
     }
 
@@ -78,7 +85,7 @@ class PropertyController extends Controller
             'outdoor_images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,wmv|max:256000'
         ]);
 
-        $validatedData['user_id'] = Auth::guard('user')->id();
+        $validatedData['user_id'] = Auth::user()->id;
         $property = Property::create($validatedData);
 
         // Get the selected service IDs from the form
@@ -145,11 +152,11 @@ class PropertyController extends Controller
         $perPage = 1;
 
         $moreMedia = PropertyMedia::where(function ($query) use ($category, $property_id) {
-            if (!empty($category)) {
+            if (!empty ($category)) {
                 $query->where('category', $category);
             }
 
-            if (!empty($property_id)) {
+            if (!empty ($property_id)) {
                 $query->where('property_id', $property_id);
             }
         })->skip(($page - 1) * $perPage)->take($perPage)->get();
@@ -157,19 +164,16 @@ class PropertyController extends Controller
         if ($moreMedia->isEmpty()) {
             return response()->json(['status' => 'not_found', 'data' => []]);
         } else {
-
-            $page_new = $page;
-            $page_new++;
+            $page_new = $page + 1;
             $moreMed = PropertyMedia::where(function ($query) use ($category, $property_id) {
-                if (!empty($category)) {
+                if (!empty ($category)) {
                     $query->where('category', $category);
                 }
 
-                if (!empty($property_id)) {
+                if (!empty ($property_id)) {
                     $query->where('property_id', $property_id);
                 }
             })->skip(($page_new - 1) * $perPage)->take($perPage)->get();
-
             if ($moreMed->isEmpty()) {
                 return response()->json(['status' => 'no_more_media', 'data' => $moreMedia]);
             } else {
@@ -186,7 +190,14 @@ class PropertyController extends Controller
      */
     public function edit($id)
     {
-        //
+
+        $data = array();
+        $data['property'] = Property::with('propertyType', 'propertyMedia', 'propertyDocument', 'services')->find($id);
+        $types = PropertyType::pluck("name", "id");
+        $data['types'] = $this->prependFontAwesomeIcon($types);
+        $data['services'] = Service::pluck("name", "id");
+
+        return view("customer.property.create", $data);
     }
 
     /**
@@ -198,7 +209,86 @@ class PropertyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'address1' => 'required|string',
+            'address2' => 'nullable|string',
+            'bedrooms' => 'nullable|integer',
+            'bathrooms' => 'nullable|integer',
+            'parking' => 'nullable|boolean',
+            'area' => 'required|integer',
+            'property_type_id' => 'required|exists:property_types,id',
+            'indoor_images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,wmv|max:256000',
+            'outdoor_images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,wmv|max:256000'
+        ]);
+
+        $property = Property::findOrFail($id);
+
+        // Update the existing property with the validated data
+        $property->update($validatedData);
+
+        // Update the selected services for the property
+        $property->services()->detach();
+
+        // Attach new services
+        foreach ($request->property_service_id as $serviceId) {
+            $property->services()->attach($serviceId, ['status' => 'NEW']);
+        }
+
+        // Handle indoor images
+        if ($request->hasFile('indoor_images')) {
+            // Delete existing indoor images
+            $existingIndoorImages = PropertyMedia::where('property_id', $property->id)->where('category', 'indoor')->get();
+            foreach ($existingIndoorImages as $existingIndoorImage) {
+                $filePath = storage_path('app/public/' . $existingIndoorImage->file_path);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                    $existingIndoorImage->delete();
+                } else {
+                    // Handle the case where the file does not exist
+                    return redirect()->back()->with('error', 'Indoor images: File not found!');
+                }
+            }
+
+            // Store and create new indoor images
+            foreach ($request->file('indoor_images') as $file) {
+                $path = $file->store('indoor_images', 'public');
+                PropertyMedia::create([
+                    'property_id' => $property->id,
+                    'file_path' => $path,
+                    'category' => 'indoor',
+                ]);
+            }
+        }
+
+        // Handle outdoor images
+        if ($request->hasFile('outdoor_images')) {
+            // Delete existing outdoor images
+            $existingOutdoorImages = PropertyMedia::where('property_id', $property->id)->where('category', 'outdoor')->get();
+            foreach ($existingOutdoorImages as $existingOutdoorImage) {
+                $filePath = storage_path('app/public/' . $existingOutdoorImage->file_path);
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                    $existingOutdoorImage->delete();
+                } else {
+                    // Handle the case where the file does not exist
+                    return redirect()->back()->with('error', 'Outdoor images: File not found!');
+                }
+            }
+
+            // Store and create new outdoor images
+            foreach ($request->file('outdoor_images') as $image) {
+                $path = $image->store('outdoor_images', 'public');
+                PropertyMedia::create([
+                    'property_id' => $property->id,
+                    'file_path' => $path,
+                    'category' => 'outdoor',
+                ]);
+            }
+        }
+
+        return redirect()->route('user.property.index')->with('success', 'Property updated successfully!');
     }
 
     /**
@@ -216,10 +306,25 @@ class PropertyController extends Controller
     {
         // Find the media by ID and delete it from the database
         $media = PropertyMedia::findOrFail($mediaId);
-        $media->delete();
 
-        // Return a response indicating success
-        return response()->json(['message' => 'Media deleted successfully']);
+        // Get the full path to the document
+        $filePath = storage_path('app/public/' . $media->file_path);
+
+        // Attempt to delete the file using unlink
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        } else {
+            // Handle the case where the file does not exist
+            return response()->json(['status' => 404, 'message' => 'File not found'], 404);
+        }
+
+        if ($media->delete()) {
+            // Return a response indicating success
+            return response()->json(['status' => 200, 'message' => 'Media deleted successfully!'], 200);
+        } else {
+            // Return a response indicating error
+            return response()->json(['status' => 404, 'message' => 'Media not deleted!'], 404);
+        }
     }
 
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Property;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
@@ -41,7 +42,7 @@ class ServiceController extends Controller
         $service = Service::findOrFail($serviceId);
         $property = Property::findOrFail($propertyId);
         $services = $property->services()->get();
-        return view('customer.services.show', compact('service', 'property', 'services'));
+        return view('customer.services.show', compact('service', 'property', 'services', 'serviceId'));
     }
 
     /**

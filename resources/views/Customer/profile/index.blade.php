@@ -32,7 +32,7 @@
                         My Properties
                     </a>
                 </li>
-                <li class="active">
+                <li class="">
                     <a href="{{ route('user.property.create') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="27" height="20" viewBox="0 0 27 20"
                             fill="none">
@@ -113,7 +113,7 @@
                 </a>
             </div>
             <div class="title-header ms-4">
-                <h2>{{ !isset($property) ? "Add" : "Edit" }} Property</h2>
+                <h2>Profile</h2>
             </div>
             <div class="right-content">
                 {{-- <form class="search-property position-relative me-3" action="" id="">
@@ -149,30 +149,31 @@
         </div>
         <!-- Header section end -->
 
-        <!-- Add Property section start  -->
+              
+
+        <!-- Add Profile section start  -->
         <section class="add-property-section">
-            <div class="container-fluid">
-                {{-- Check if the $property variable is set to determine if it's an edit or create form --}}
-                @if(isset($property))
-                    {{-- For edit form, use the update route and method --}}
-                    {{ Form::model($property, ['route' => ['user.property.update', $property->id], 'method' => 'PUT', 'files' => true, 'class' => 'PropertyForm']) }}
-                @else
-                    {{-- For create form, use the store route and method --}}
-                    {{ Form::open(['route' => 'user.property.store', 'method' => 'POST', 'files' => true, 'class' => 'PropertyForm']) }}
-                @endif
+
+            @if(session('success'))
+                <div class="alert alert-primary alert-dismissible fade show mb-4" role="alert">
+                    <strong>Success!</strong> {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        
+            {{ Form::open(['url' => route('user.profile.update'), 'method' => 'POST', 'files' => true, 'class' => 'PropertyForm']) }}
+            @method('PUT')
                 <div class="row">
-                    @include('customer.property.form')
+                    @include('customer.profile.form')
                     <div class="col-lg-12">
                         <div class="form-group">
                             <input type="submit" class="btn btn-primary" value="Submit">
                         </div>
                     </div>
                 </div>
-                {{ Form::close() }}
-            </div>
-
+            {{ Form::close() }}
         </section>
-        <!-- Add Property section end  -->
+        <!-- Add Profile section end  -->
 
     </div>
 @endsection

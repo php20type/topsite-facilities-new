@@ -10,6 +10,8 @@ use App\Models\PropertyDocument;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CustomerApproveEmail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 use App\Models\User;
 
@@ -20,7 +22,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $users = User::where('is_approve', 1)->get();
+        $users = User::where('is_approve', 1)->where('is_admin', 0)->get();
         return view('admin.customer.list', compact('users'));
     }
 
@@ -151,7 +153,19 @@ class CustomerController extends Controller
     public function deleteDocument(Request $request, $id)
     {
         $document = PropertyDocument::findOrFail($id);
-        // Delete the document
+
+        // Get the full path to the document
+        $filePath = storage_path('app/public/' . $document->document_path);
+
+        // Attempt to delete the file using unlink
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        } else {
+            // Handle the case where the file does not exist
+            return response()->json(['error' => 'File not found'], 404);
+        }
+
+        // Delete the document from the database
         $document->delete();
 
         // You might return a response here if needed

@@ -19,12 +19,12 @@ class CreatePropertiesTable extends Migration
             $table->unsignedBigInteger('property_type_id'); // Property name
             $table->text('address1')->nullable(); // Property description (nullable)
             $table->text('address2')->nullable(); // Property description (nullable)
-            $table->integer('bedrooms'); // Number of bedrooms
-            $table->integer('bathrooms'); // Number of bathrooms
-            $table->boolean('parking');
+            $table->integer('bedrooms')->nullable();
+            $table->integer('bathrooms')->nullable();
+            $table->boolean('parking')->nullable();
             $table->integer('area')->nullable();
-            $table->foreign('property_type_id')->references('id')->on('property_types')->onDelete('cascade');
             $table->timestamps();
+            $table->foreign('property_type_id')->references('id')->on('property_types')->onDelete('cascade');
         });
     }
 

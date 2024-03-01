@@ -88,7 +88,7 @@
                                     <rect width="20" height="20" fill="white" transform="matrix(-1 0 0 1 20 0)" />
                                 </clipPath>
                             </defs>
-                        </svg> logout </a>
+                        </svg> Logout </a>
                     <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
@@ -133,7 +133,7 @@
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </a>
-                    <a href="#">
+                    <a href="{{ route('user.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
                             fill="none">
                             <rect width="48.0001" height="48" rx="10" fill="#389BFE" />
@@ -160,6 +160,14 @@
                                 d="M0.469669 5.46967C0.176777 5.76256 0.176777 6.23744 0.469669 6.53033L5.24264 11.3033C5.53553 11.5962 6.01041 11.5962 6.3033 11.3033C6.59619 11.0104 6.59619 10.5355 6.3033 10.2426L2.06066 6L6.3033 1.75736C6.59619 1.46447 6.59619 0.989593 6.3033 0.696699C6.01041 0.403806 5.53553 0.403806 5.24264 0.696699L0.469669 5.46967ZM21 5.25L1 5.25V6.75L21 6.75V5.25Z"
                                 fill="#31903C" />
                         </svg> &nbsp; Back </a>
+                    <div class="float-end">
+                        <a href="{{ route('user.property.edit', ['property' => $property->id]) }}">
+                            <i class="fa-duotone fa-pen-to-square"></i> Edit
+                        </a>
+                        <a class="ps-3 text-danger" id="delete-property" href="javascript:void(0);" onclick="confirm('Are you sure?'); return false;">
+                            <i class="fa-duotone fa-trash-can-xmark"></i> Delete
+                        </a>
+                    </div>
                 </div>
                 <div class="Inventorysection">
                     <div class="section-header mb-3">
@@ -167,6 +175,16 @@
                         <p>{{ $property->description }}
                         </p>
                     </div>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <div class="InventoryDetails">
                         <h4 class="sec-title">{{ $property->name }}</h4>
                         <ul class="list-inline">
@@ -294,26 +312,30 @@
                         </ul>
                     </div>
                     <div class="InventoryImages">
-                        @foreach ($indoorMedia as $media)
-                            <div class="indoor_media">
-                                <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
-                                    @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
-                                        <video controls class="img-fluid">
-                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    @else
-                                        <a href="#" class="img-fluid">
-                                            <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
-                                        </a>
-                                    @endif
-                                    <button class="delete-media position-absolute top-0 mt-3 start-0 m-2"
-                                        data-media-id="{{ $media->id }}">Delete</button>
-                                </a>        
-                            </div>
-                        @endforeach
-                        @foreach ($outdoorMedia as $media)
+                        <div class="indoor_media">
+                            @foreach ($indoorMedia as $media)
+                               <div class="media-container">
+                                    <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
+                                        @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
+                                            <video controls class="img-fluid">
+                                                <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        @else
+                                            <a href="#" class="img-fluid">
+                                                <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
+                                            </a>
+                                        @endif
+                                        <button class="delete-media"
+                                            data-media-id="{{ $media->id }}" onClick="deleteMedia('{{ $media->id }}')"><i class="fa-solid fa-xmark"></i></button>
+                                    </a>   
+                               </div>     
+                            @endforeach
+                        </div>
                             <div class="outdoor_media">
+
+                        @foreach ($outdoorMedia as $media)
+                                <div class="media-container">
                                 <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
                                     @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
                                         <video controls class="img-fluid">
@@ -325,11 +347,12 @@
                                             <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
                                         </a>
                                     @endif
-                                    <button class="delete-media position-absolute top-0 mt-3 start-0"
-                                        data-media-id="{{ $media->id }}">Delete</button>
-                                </a>        
-                            </div>
+                                    <button class="delete-media"
+                                        data-media-id="{{ $media->id }}" onClick="deleteMedia('{{ $media->id }}')"><i class="fa-solid fa-xmark"></i></button>
+                                </a>  
+                                </div>      
                         @endforeach
+                            </div>
                     </div>
                     <input type="hidden" id="indoor_page" value="1">
                     <input type="hidden" id="outdoor_page" value="1">
@@ -348,9 +371,11 @@
                             </div>
                         </div>
                         <div class="more-button">
+                            @if($property->propertyMedia()->where('category', 'indoor')->count()>1)
                             <button id="loadMoreButton" data-category="indoor"
                                 data-property_id="{{ $property->id }}">Load
                                 More</button>
+                                @endif
                         </div>
                     </div>
 
@@ -411,7 +436,7 @@
                                         </div>
                                     </label>
                                 </form>
-                                @if($property->propertyDocument == null)
+                                @if($property->propertyDocument !== null)
                                 @foreach ($property->propertyDocument as $document)
                                     <div class="BodyInnerSec">
                                         <div class="PaperWork">
@@ -421,7 +446,7 @@
                                                     target="_blank">View Document</a>
                                             </div>
                                             <div class="DeleteBtn">
-                                                <button class="btn fa-light fa-trash delete-document"
+                                                <button class="btn fa-regular fa-trash-can-xmark delete-document text-danger"
                                                     data-document-id="{{ $document->id }}"
                                                     data-delete-url="{{ route('delete.document', $document->id) }}"></button>
                                             </div>
@@ -455,13 +480,13 @@
 
                 var property_id = this.dataset.property_id;
                 var page = $('#indoor_page');
-
+                console.log('property_id',property_id);
                 $.ajax({
-                    url: '/user/fetch-more-media',
+                    url: '/fetch-more-media',
                     method: 'GET',
                     data: {
                         category: 'indoor',
-                        property: this.property_id,
+                        property: property_id,
                         page: page.val(),
                     },
                     success: function(response) {
@@ -483,11 +508,11 @@
                 var page = $('#outdoor_page');
 
                 $.ajax({
-                    url: '/user/fetch-more-media',
+                    url: '/fetch-more-media',
                     method: 'GET',
                     data: {
                         category: 'outdoor',
-                        property: this.property_id,
+                        property: property_id,
                         page: page.val(),
                     },
                     success: function(response) {
@@ -505,51 +530,39 @@
         });
 
         document.getElementById('loadMoreButton').addEventListener('click', function() {
-            if ($("#switchIndoor").is(":checked")) {
-                var category = 'indoor';
-            } else {
-                var category = 'outdoor';
-            }
-
+            var category = $("#switchIndoor").is(":checked") ? 'indoor' : 'outdoor';
             var property_id = this.dataset.property_id;
             var page = category === 'indoor' ? $('#indoor_page') : $('#outdoor_page');
 
             $.ajax({
-                url: '/user/fetch-more-media',
+                url: '/fetch-more-media',
                 method: 'GET',
                 data: {
                     category: category,
-                    property: this.dataset.property_id,
-                    page: page.val(),
+                    property: property_id,
+                    page: parseInt(page.val())+1,
                 },
                 success: function(response) {
-                    if (response.status === 'no_more_media' || response.status === 'not_found') {
-                        $('#loadMoreButton').hide();
-                    }
-
-                    var nextPage = parseInt(page.val()) + 1;
-                    page.val(nextPage);
-
                     var mediaContainer = category === 'indoor' ? $('.indoor_media') : $('.outdoor_media');
-                    
-                    // Check if the response data is an array
-                    if (Array.isArray(response.data)) {
-                        response.data.forEach(function(media) {
-                            var mediaElement = createMediaElement(media,category);
-                            mediaContainer.append(mediaElement);
-                        });
-                    } else {
-                        // Handle single media response
-                        var mediaElement = createMediaElement(response.data , category);
-                        mediaContainer.append(mediaElement);
-                    }
+                    var nextPage = parseInt(page.val()) + 1;
+                        page.val(nextPage);
+                        if (response.data.length > 0) {
+                            response.data.forEach(function(media) {
+                                var mediaElement = createMediaElement(media, category);
+                                mediaContainer.append(mediaElement);
+                            });
+                        }
+                    if (response.status === 'not_found' || response.status === 'no_more_media') {
+                        $('#loadMoreButton').hide(); // Hide button if no more records found
+                    } 
                 },
-
                 error: function(error) {
                     console.error(error);
                 }
             });
         });
+
+
 
         function createMediaElement(media,category) {
 
@@ -559,21 +572,23 @@
             
             if (isVideo) {
                 $mediaElement = $('<div class="media-container"><a href="' + mediaPath + '" target="_blank" class="media-link"><video controls class="img-fluid"><source src="' + mediaPath +
-                    '" type="video/mp4">Your browser does not support the video tag.</video></a></div>');
+                    '" type="video/mp4" class="img-fluid">Your browser does not support the video tag.</video></a></div>');
             } else {
-                $mediaElement = $('<div class="media-container"><a href="' + mediaPath + '" target="_blank" class="media-link"><a href="#" class="img-fluid"><img src="' + mediaPath +
-                    '" alt=""></a></div>');
+                $mediaElement = $('<div class="media-container"><a href="' + mediaPath + '" target="_blank" class="media-link"><a href="#" ><img src="' + mediaPath +
+                    '" alt="" class="img-fluid"></a></div>');
             }
 
-            // Append the delete button
-            var $deleteButton = $('<button class="delete-media close-button" data-media-id="' + media.id + '">Delete</button>');
+            // Append the delete button 
+            var $deleteButton = $('<button class="delete-media" onClick="deleteMedia(' + media.id + ')"><i class="fa-solid fa-xmark"></i></button>');
 
             // Append the delete button to the media element
             $mediaElement.append($deleteButton);
 
             return $mediaElement;
         }
-        $('.delete-media').click(function() {
+        function deleteMedia(mediaId){
+         if (!confirm('Are you sure?')) return false;
+
             var mediaId = $(this).data('media-id');
 
             $.ajax({
@@ -584,16 +599,41 @@
                     '_token': '{{ csrf_token() }}'
                 },
                 success: function(response) {
+                    console.log(response);
                     // Remove the media element from the DOM
                     $(`[data-media-id="${mediaId}"]`).parent().remove();
                     $(this).parent().remove(); // Assuming button is a direct child of the media element
-                    toastr.delete('Delete media successfully!', 'Delete', { positionClass: 'toast-top-right' });
+                    toastr.success('Delete media successfully!', 'Delete', { positionClass: 'toast-top-right' });
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
                 }
-            });
-        });
+            });   
+        }
+        // $('.delete-media').click(function() {
+        //     if (!confirm('Are you sure?')) return false;
+
+        //     var mediaId = $(this).data('media-id');
+
+        //     $.ajax({
+        //         url: '{{ route('media.delete', ['mediaId' => '__mediaId__']) }}'.replace('__mediaId__',
+        //             mediaId),
+        //         type: 'DELETE',
+        //         data: {
+        //             '_token': '{{ csrf_token() }}'
+        //         },
+        //         success: function(response) {
+        //             console.log(response);
+        //             // Remove the media element from the DOM
+        //             $(`[data-media-id="${mediaId}"]`).parent().remove();
+        //             $(this).parent().remove(); // Assuming button is a direct child of the media element
+        //             toastr.success('Delete media successfully!', 'Delete', { positionClass: 'toast-top-right' });
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error(error);
+        //         }
+        //     });
+        // });
 
         $("#file-upload-btn").click(function() {
             $("#file-upload").click();
@@ -657,6 +697,8 @@
             });
         });
         $(document).on('click', '.delete-document', function(e) {
+
+            if (!confirm('Are you sure?')) return false;
             e.preventDefault();
 
             var documentId = $(this).data('document-id');
@@ -672,7 +714,7 @@
                 },
                 success: function(response) {
                     // Remove the document entry from the DOM
-                    toastr.error('Document deleted successfully!', 'Delete', { positionClass: 'toast-top-right' });
+                    toastr.success('Document deleted successfully!', 'Delete', { positionClass: 'toast-top-right' });
                     documentEntry.remove();
                 },
                 error: function(xhr, status, error) {

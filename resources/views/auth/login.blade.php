@@ -16,11 +16,11 @@
                     {{ $errors->first('error') }}
                 </div>
             @endif
-            @isset($url)
-                <form class="singup-form-sec" method="POST" action='{{ url("login/$url") }}' aria-label="{{ __('Login') }}">
-                @else
+            {{-- @isset($url) --}}
+                {{-- <form class="singup-form-sec" method="POST" action='{{ url("login/$url") }}' aria-label="{{ __('Login') }}">
+                @else --}}
                     <form class="singup-form-sec" method="POST" action="{{ route('login') }}" aria-label="{{ __('Login') }}">
-                    @endisset
+                    {{-- @endisset --}}
                     @csrf
                     <div class="form-group email">
                         <input id="email" type="email" placeholder="loremipsum@gmail.com"

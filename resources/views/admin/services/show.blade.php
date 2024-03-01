@@ -126,8 +126,10 @@
                                 <img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user photo" />
                             </div>
                             <div class="user-info">
+                                <input type="hidden" id="user_name" value="{{ $property->user->name }}">
+                                <input type="hidden" id="user_id" value="{{ $property->user->id }}">
                                 <h4>{{ $property->user->name }}</h4>
-                                <h6>Last online {{ $property->user->created_at->diffForHumans() }}</h6>
+                                <h6>Last online {{ $property->user->updated_at->diffForHumans() }}</h6>
                             </div>
                         </div>
                         <!-- Example split danger button -->
@@ -154,56 +156,108 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Chat Messages Container -->
-                    <div class="body-chat-message-user">
-                        @foreach ($messages as $message)
-                            <div class="chat-active">
-                                <h4>{{ $message->created_at->format('m/d/Y h:i A') }}</h4>
-                            </div>
-                            <div class="message-user-left">
-                                <div class="message-user-profile">
-                                    <img src="{{ URL::asset('img/logo/logo.svg') }}">
-                                </div>
-                                <div class="message-user-left-text">
-                                    <!-- Display message content here -->
-                                    <p>{{ $message->content }}</p>
-                                    <span class="time">{{ $message->created_at->diffForHumans() }}</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+                    <div class="col-12">
+                        <div class="card">
+                            
+                            <div class="card-body" id="chat_area">
 
-                    <!-- Chat Footer -->
-                    <div class="footer-chat-message-user">
-                        <form action="" method="POST">
-                            @csrf
-                            <div class="message-user-send">
-                                <div class="action-left-button">
-                                    <a href="#">
-                                        <i class="fa-light fa-image"></i>
-                                    </a>
-                                    <a href="#">
-                                        <i class="fa-light fa-plus"></i>
-                                    </a>
-                                </div>
-                                <input type="text" name="message" id="message-input"
-                                    placeholder="Type a message here..." class="form-control">
-                                <div class="action-right-button">
-                                    <a href="#">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <!-- Your SVG Icon -->
-                                        </svg>
-                                    </a>
-                                    <button type="submit" id="send-message-btn">
-                                        <i class="fa-solid fa-paper-plane"></i>
-                                    </button>
-                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
+                  {{-- <div class="col-sm-4 col-lg-3">
+            <div class="card">
+                <div class="card-header"><b>Connected User</b></div>
+                <div class="card-body" id="user_list">
 
+                </div>
+            </div>
+        </div> --}}
+        
+        {{-- <div class="col-sm-4 col-lg-3">
+            <div class="card" style="height:255px; overflow-y: scroll;">
+                <div class="card-header">
+                    <input type="text" class="form-control" placeholder="Search User..." autocomplete="off"
+                        id="search_people" onkeyup="search_user('{{ Auth::id() }}', this.value);" />
+                </div>
+                <div class="card-body">
+                    <div id="search_people_area" class="mt-3"></div>    
+                </div>
+            </div>
+            <br />
+            <div class="card" style="height:255px; overflow-y: scroll;">
+                <div class="card-header"><b>Notification</b></div>
+                <div class="card-body">
+                    <ul class="list-group" id="notification_area">
+
+                    </ul>
+                </div>
+            </div>
+        </div> --}}
+    </div>
+                {{-- <div class="body-chat-message-user">
+                    <div class="chat-active">
+                        <h4>08/11/2023 11:00 AM</h4>
+                    </div>
+                    <div class="message-user-left">
+                        <div class="message-user-profile">
+                            <img src="{{ URL::asset('img/logo/logo.svg') }}">
+                        </div>
+                        <div class="message-user-left-text">
+                            <img src="{{ URL::asset('img/home/Group.png') }}" />
+                            <p>Lorem ipsum dolor?</p>
+                            <span class="time">4 days ago</span>
+                        </div>
+                    </div>
+                    <div class="message-user-right">
+                        <div class="message-user-profile">
+                            <img src="{{ URL::asset('img/logo/logo.svg') }}">
+                        </div>
+                        <div class="message-user-right-text">
+                            <p>Hey! Okay.</p>
+                            <span class="time">4 days ago</span>
+                        </div>
+                    </div>
+                    <div class="chat-status">
+                        <h4><strong>Company</strong> Changed Status <strong>Done</strong></h4>
+                    </div>
+                </div>
+                <div class="footer-chat-message-user">
+                    <div class="message-user-send">
+                        <div class="action-left-button">
+                            <a href="#">
+                                <i class="fa-light fa-image"></i>
+                            </a>
+                            <a href="#">
+                                <i class="fa-light fa-plus"></i>
+                            </a>
+                        </div>
+                        <input type="text" placeholder="Type a message here..." class="form-control">
+                        <div class="action-right-button">
+                            <a href="#">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10.75" stroke="#707C97"
+                                        stroke-opacity="0.5" stroke-width="2.5" />
+                                    <path
+                                        d="M7.63623 13.6367C8.45635 15.2574 10.1026 16.364 11.9999 16.364C13.8971 16.364 15.5434 15.2574 16.3635 13.6367"
+                                        stroke="#707C97" stroke-opacity="0.5" stroke-width="2.5"
+                                        stroke-linecap="round" />
+                                    <circle cx="8.72714" cy="8.72763" r="1.09091" fill="#707C97"
+                                        fill-opacity="0.5" />
+                                    <circle cx="15.2725" cy="8.72763" r="1.09091" fill="#707C97"
+                                        fill-opacity="0.5" />
+                                </svg>
+                            </a>
+                            <a href="#">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                </div> --}}
+            </div>
+    </div>
 
             </div>
         </section>
@@ -221,49 +275,7 @@
         </div>
     @endif
 
-    <div class="row">
-        <div class="col-sm-4 col-lg-3">
-            <div class="card">
-                <div class="card-header"><b>Connected User</b></div>
-                <div class="card-body" id="user_list">
-
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4 col-lg-6">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col col-md-6" id="chat_header"><b>Chat Area</b></div>
-                        <div class="col col-md-6" id="close_chat_area"></div>
-                    </div>
-                </div>
-                <div class="card-body" id="chat_area">
-
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4 col-lg-3">
-            <div class="card" style="height:255px; overflow-y: scroll;">
-                <div class="card-header">
-                    <input type="text" class="form-control" placeholder="Search User..." autocomplete="off"
-                        id="search_people" onkeyup="search_user('{{ Auth::id() }}', this.value);" />
-                </div>
-                <div class="card-body">
-                    <div id="search_people_area" class="mt-3"></div>
-                </div>
-            </div>
-            <br />
-            <div class="card" style="height:255px; overflow-y: scroll;">
-                <div class="card-header"><b>Notification</b></div>
-                <div class="card-body">
-                    <ul class="list-group" id="notification_area">
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 @endsection
 @section('page_scripts')
     <script>
@@ -292,20 +304,29 @@
         });
 
         /* websocket chat module script */
-            var conn = new WebSocket('ws://127.0.0.1:8090/?token={{ Auth::guard('admin')->user()->token }}');
-            var from_user_id = "{{ Auth::guard('admin')->user()->id }}";
-            var to_user_id = "";
+            var conn = new WebSocket('ws://127.0.0.1:8090/?token={{ Auth::user()->token }}');
+            var from_user_id = 1;
+            var to_user_id = $('#user_id').val();
+            var to_user_name = $('#user_name').val();
+            var serviceId='{{ $serviceId}}';
 
-            // dipanggil ketika koneksi baru websocket sudah dihidupkan
+            // Called when a new WebSocket connection is established
             conn.onopen = function(e) {
                 console.log("Connection established!");
-
-                load_unconnected_user(from_user_id); // akan ngeload list user yg mau dichat
-                load_unread_notification(from_user_id); // akan menampilkan list notification
-                load_connected_chat_user(from_user_id); // akan menampilkan list user yg approved chat_request
+                loadChatForLoggedInUser();
+                // load_unconnected_user(from_user_id); // Loads the list of users to chat with
+                // load_unread_notification(from_user_id); // Displays the list of notifications
+                // load_connected_chat_user(from_user_id); // Displays the list of users who approved chat_request
             };
+            
+            function loadChatForLoggedInUser() {
+                // Assume you have the necessary data for the logged-in user, such as user ID and user name
+                 make_chat_area(to_user_id, to_user_name);
+                // Load chat data if needed
+                load_chat_data(from_user_id, to_user_id); // You may load chat data here if necessary
+            }
 
-            // dipanggil ketika pesan telah diterima
+            // Called when a message is received
             conn.onmessage = function(e) {
                 var data = JSON.parse(e.data);
 
@@ -318,7 +339,7 @@
                 if (data.status) {
                     var online_status_icon = document.getElementsByClassName('online_status_icon');
 
-                    // data yg akan ditampilkan di user terkoneksi
+                    // Data to be displayed in connected users
                     for (var count = 0; count < online_status_icon.length; count++) {
                         if (online_status_icon[count].id == 'status_' + data.id) {
                             if (data.status == 'Online') {
@@ -336,7 +357,7 @@
                     }
                 }
 
-                // jika load_user_unconnect || user yg diinputkan == true
+                // If load_user_unconnect or input user == true
                 if (data.response_load_unconnected_user || data.response_search_user) {
                     var html = '';
 
@@ -365,8 +386,8 @@
                                 </div>
                             </div>
                         </li>
-                        `; // ketika button diklik, maka akan call method send request dan set type == request_chat_user
-                            // jadi data from_user_id dan to_user_id akan masuk ke tabel chat_request
+                        `; // When the button is clicked, call the send request method and set type == request_chat_user
+                            // so from_user_id and to_user_id will be inserted into the chat_request table
                         }
 
                         html += '</ul>';
@@ -377,20 +398,20 @@
                     document.getElementById('search_people_area').innerHTML = html;
                 }
 
-                // setelah button send diklik, key response_from_user di set jadi true
-                // blok ini untuk menampilkan list user yg belum dikirim chat_request
+                // After the send button is clicked, the response_from_user key is set to true
+                // This block is for displaying the list of users who have not been sent chat_request
                 if (data.response_from_user_chat_request) {
-                    // kirim auth()->user_id dan value query search
+                     // Send auth()->user_id and value query search
                     search_user(from_user_id, document.getElementById('search_people').value);
 
-                    load_unread_notification(from_user_id); // akan menampilkan list notification
+                    load_unread_notification(from_user_id); // Displays the list of notifications
                 }
 
                 if (data.response_to_user_chat_request) {
-                    load_unread_notification(data.user_id); // akan menampilkan list notification
+                    load_unread_notification(data.user_id); // Displays the list of notifications
                 }
 
-                // dan ini jadi true kalo button send diklik
+                 // This becomes true when the send button is clicked
                 if (data.response_load_notification) {
                     var html = '';
 
@@ -411,7 +432,7 @@
                             <div class="col col-8">` + user_image + `&nbsp;` + data.data[count].name + `</div>
                             <div class="col col-4">
                     `;
-                        // ditampilkan di user yg send request
+                        // Displayed to the user who sent the request
                         if (data.data[count].notification_type == 'Send Request') {
                             if (data.data[count].status == 'Pending') {
                                 html +=
@@ -421,19 +442,19 @@
                                     '<button type="button" name="send_request" class="btn btn-danger btn-sm float-end">Request Rejected</button>';
                             }
                         } else {
-                            // ditampilkan di user penerima request
+                            // Displayed to the request recipient
                             if (data.data[count].status == 'Pending') {
-                                // call function process_chat_request() sekaligus kirim parameternya untuk me-REJECT
+                                // Call function process_chat_request() and send its parameters to REJECT
                                 html +=
                                     '<button type="button" class="btn btn-danger btn-sm float-end" onclick="process_chat_request(' +
                                     data.data[count].id + ', ' + data.data[count].from_user_id + ', ' + data.data[count]
                                     .to_user_id + ', `Reject`)"><i class="fas fa-times"></i></button>&nbsp;';
-                                // call function process_chat_request() sekaligus kirim parameternya untuk me-APPROVE
+                                // Call function process_chat_request() and send its parameters to APPROVE
                                 html +=
                                     '<button type="button" class="btn btn-success btn-sm float-end" onclick="process_chat_request(' +
                                     data.data[count].id + ', ' + data.data[count].from_user_id + ', ' + data.data[count]
                                     .to_user_id +
-                                    ', `Approve`)"><i class="fas fa-check"></i></button>'; // pas diklik bakal hilang di list notification di client user pengirim dan penerima
+                                    ', `Approve`)"><i class="fas fa-check"></i></button>'; // when clicked, it will be removed from the notification list on the sender and recipient client
                             } else {
                                 html +=
                                     '<button type="button" name="send_request" class="btn btn-danger btn-sm float-end">Request Rejected</button>';
@@ -447,17 +468,17 @@
                     `;
                     }
 
-                    // tampilkan html di list notification
+                     // Display html in the notification list
                     document.getElementById('notification_area').innerHTML = html;
                 }
 
                 if (data.response_process_chat_request) {
-                    load_unread_notification(data.user_id); // akan menampilkan list notification
-                    load_connected_chat_user(data.user_id); // akan menampilkan list user yg terkoneksi (abis di approve)
+                    load_unread_notification(data.user_id); // Displays the list of notifications
+                    load_connected_chat_user(data.user_id); // Displays the list of connected users (after approval)
                 }
 
                 if (data.response_connected_chat_user) {
-                    // menampilkan list user yg approve chat_request
+                    // Displays the list of users who approved chat_request
                     var html = '<div class="list-group">';
 
                     if (data.data.length > 0) {
@@ -472,13 +493,13 @@
                             var last_seen = '';
 
                             if (data.data[count].user_status == 'Online') {
-                                // menampilkan tanda online
+                                // Displays the online indicator
                                 html += '<span class="text-success online_status_icon" id="status_' + data.data[count].id +
                                     '"><i class="fas fa-circle"></i></span>';
 
                                 last_seen = 'Online';
                             } else {
-                                // tanda offline
+                                // Offline indication
                                 html += '<span class="text-danger online_status_icon" id="status_' + data.data[count].id +
                                     '"><i class="fas fa-circle"></i></span>';
 
@@ -519,22 +540,29 @@
                 if (data.message) {
                     var html = '';
 
-                    // data yg diterima pengirim chat
+                    // Data received by the chat sender
                     if (data.from_user_id == from_user_id) {
 
                         var icon_style = '';
+                        if(to_user_id!='' && data.to_user_id == from_user_id){
+                            update_message_status(data.chat_message_id, from_user_id, to_user_id, 'Read');
+                        }
+                        else{
+                            update_message_status(data.chat_message_id, data.from_user_id, data.to_user_id, 'Send');
 
+                        }
+                        load_chat_data(data.from_user_id,data.to_user_id);  
                         if (data.message_status == 'Not Send') {
                             icon_style = '<span id="chat_status_' + data.chat_message_id +
                                 '" class="float-end"><i class="fas fa-check text-muted"></i></span>';
                         }
-                        // kalo penerima udah login, tampilkan centang 2
+                        // If the recipient is logged in, display double ticks
                         if (data.message_status == 'Send') {
                             icon_style = '<span id="chat_status_' + data.chat_message_id +
                                 '" class="float-end"><i class="fas fa-check-double text-muted"></i></span>';
                         }
 
-                        // kalo udah dibaca tampilkan centang 2 biru
+                         // If it's read, display blue double ticks
                         if (data.message_status == 'Read') {
                             icon_style = '<span class="text-primary float-end" id="chat_status_' + data.chat_message_id +
                                 '"><i class="fas fa-check-double"></i></span>';
@@ -549,7 +577,7 @@
                     </div>
                     `;
                     } else
-                    // yg diterima penerima chat
+                    // Data received by the chat recipient
                     {
                         if (to_user_id != '') {
                             html += `
@@ -560,8 +588,7 @@
                         </div>
                         `;
 
-                            // chat_message_id didapat dari id di tabel chatnya
-                            update_message_status(data.chat_message_id, from_user_id, to_user_id, 'Read');
+                            // chat_message_id obtained from the id in the chat table
                         } else {
                             var count_unread_message_element = document.getElementById('user_unread_message_' + data
                                 .from_user_id + '');
@@ -575,7 +602,6 @@
                                 count_unread_message_element.innerHTML = '<span class="badge bg-primary rounded-pill">' +
                                     count_unread_message + '</span>';
 
-                                update_message_status(data.chat_message_id, data.from_user_id, data.to_user_id, 'Send');
                             }
                         }
 
@@ -596,23 +622,23 @@
 
                     for (var count = 0; count < data.chat_history.length; count++) {
 
-                        // kalo yg login user pengirim chat
+                        // If the logged in user is the chat sender
                         if (data.chat_history[count].from_user_id == from_user_id) {
                             var icon_style = '';
 
-                            // kalo penerima belum login, tampilin icon ceklis 1
+                            // If the recipient is not logged in, display single tick icon
                             if (data.chat_history[count].message_status == 'Not Send') {
                                 icon_style = '<span id="chat_status_' + data.chat_history[count].id +
                                     '" class="float-end"><i class="fas fa-check text-muted"></i></span>';
                             }
 
-                            // kalo penerima udah login, tampilkan icon ceklis 2
+                            // If the recipient is logged in, display double tick icon
                             if (data.chat_history[count].message_status == 'Send') {
                                 icon_style = '<span id="chat_status_' + data.chat_history[count].id +
                                     '" class="float-end"><i class="fas fa-check-double text-muted"></i></span>';
                             }
 
-                            // kalo udah dibaca, tampilkan icon ceklis 2 biru
+                            // If it's read, display blue double ticks
                             if (data.chat_history[count].message_status == 'Read') {
                                 icon_style = '<span class="text-primary float-end" id="chat_status_' + data.chat_history[
                                     count].id + '"><i class="fas fa-check-double"></i></span>';
@@ -629,7 +655,7 @@
 
 
                         }
-                        // kalo yg login user penerima chat
+                        // If the logged in user is the chat recipient
                         else {
                             if (data.chat_history[count].message_status != 'Read') {
                                 update_message_status(data.chat_history[count].id, data.chat_history[count].from_user_id,
@@ -654,14 +680,13 @@
                     }
 
                     document.querySelector('#chat_history').innerHTML = html;
-
                     scroll_top();
                 }
 
                 if (data.update_message_status) {
                     var chat_status_element = document.querySelector('#chat_status_' + data.chat_message_id + '');
 
-                    // update icon chat status
+                    // Update chat status icon
                     if (chat_status_element) {
                         if (data.update_message_status == 'Read') {
                             chat_status_element.innerHTML = '<i class="fas fa-check-double text-primary"></i>';
@@ -671,7 +696,7 @@
                         }
                     }
 
-                    // menampilkan notif icon angka sesuai chat yg unread
+                     // Display number badge icon according to unread messages
                     if (data.unread_msg) {
                         var count_unread_message_element = document.getElementById('user_unread_message_' + data
                             .from_user_id + '');
@@ -679,11 +704,11 @@
                         if (count_unread_message_element) {
                             var count_unread_message = count_unread_message_element.textContent;
 
-                            // kalo notifnya masih 0, iconnya muncul jumlah 1
+                            // If the notification is still 0, the icon will display 1
                             if (count_unread_message == '') {
                                 count_unread_message = parseInt(0) + 1;
                             }
-                            // kalo udah ada notif sebelumnya, maka tambahin 1s
+                            // If there is a previous notification, then add 1
                             else {
                                 count_unread_message = parseInt(count_unread_message) + 1;
                             }
@@ -705,7 +730,7 @@
                     from_user_id: from_user_id,
                     type: 'request_load_unconnected_user'
                 };
-
+                console.log('load_unconnected_user',data);
                 conn.send(JSON.stringify(data));
             }
 
@@ -744,7 +769,7 @@
                     type: 'request_load_unread_notification'
                 };
 
-                conn.send(JSON.stringify(data)); // data yg dikirimkan ke parameter $msg
+                conn.send(JSON.stringify(data)); // Data sent to $msg parameter
 
             }
 
@@ -758,7 +783,7 @@
                     type: 'request_process_chat_request'
                 };
 
-                conn.send(JSON.stringify(data)); // data yg dikirimkan ke parameter $msg
+                conn.send(JSON.stringify(data)); // Data sent to $msg parameter
             }
 
             // video 12
@@ -768,34 +793,27 @@
                     type: 'request_connected_chat_user'
                 };
 
-                conn.send(JSON.stringify(data)); // data yg dikirimkan ke parameter $msg
+                conn.send(JSON.stringify(data)); // Data sent to $msg parameter
             }
 
             function make_chat_area(user_id, to_user_name) {
                 var html = `
-            <div id="chat_history"></div>
-            <div class="input-group mb-3">
-                <div id="message_area" class="form-control" contenteditable style="min-height:125px; border:1px solid #ccc; border-radius:5px;"></div>
-                <label class="btn btn-warning" style="line-height:125px;">
-                    <i class="fas fa-upload"></i> <input type="file" id="browse_image" onchange="upload_image()" hidden />
-                </label>
-                <button type="button" class="btn btn-success" id="send_button" onclick="send_chat_message()"><i class="fas fa-paper-plane"></i></button>
-            </div>
-            `; // ketika tombol send diklik
+                <div id="chat_history"></div>
+                <div class="input-group mb-3">
+                    <div id="message_area" class="form-control" contenteditable style="min-height:125px; border:1px solid #ccc; border-radius:5px;"></div>
+                    <label class="btn btn-warning" style="line-height:125px;">
+                        <i class="fas fa-upload"></i> <input type="file" id="browse_image" onchange="upload_image()" hidden />
+                    </label>
+                    <button type="button" class="btn btn-success" id="send_button" onclick="send_chat_message()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                `; // when the send button is clicked
 
                 document.getElementById('chat_area').innerHTML = html;
-                document.getElementById('chat_header').innerHTML = 'Chat with <b>' + to_user_name + '</b>';
-                document.getElementById('close_chat_area').innerHTML =
-                    '<button type="button" id="close_chat" class="btn btn-danger btn-sm float-end" onclick="close_chat();"><i class="fas fa-times"></i></button>';
-
                 to_user_id = user_id;
             }
 
             function close_chat() {
-                document.getElementById('chat_header').innerHTML = 'Chat Area'; // nampilin string di header
-
-                document.getElementById('close_chat_area').innerHTML = ''; // menghilangkan tombol close
-                document.getElementById('chat_area').innerHTML = ''; // menghapus area chattingan dari halaman browser
+                document.getElementById('chat_area').innerHTML = ''; // Remove the chat area from the browser page
 
                 to_user_id = '';
             }
@@ -810,21 +828,23 @@
                     message: message,
                     from_user_id: from_user_id,
                     to_user_id: to_user_id,
+                    service_id:serviceId,
                     type: 'request_send_message'
                 };
 
-                conn.send(JSON.stringify(data)); // kirim data ke server websocket (ke param $msg)
+                conn.send(JSON.stringify(data)); // Send data to the websocket server (to $msg parameter)
 
                 document.querySelector('#message_area').innerHTML = '';
                 document.querySelector('#send_button').disabled = false; // enable tombol kirim
             }
 
-            // video
+            // video 16
             // di call ketika klik user yg di list connected (jadi akan nampilkan data dari db)
             function load_chat_data(from_user_id, to_user_id) {
                 var data = {
                     from_user_id: from_user_id,
                     to_user_id: to_user_id,
+                    service_id:serviceId,
                     type: 'request_chat_history'
                 };
 

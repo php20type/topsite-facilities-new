@@ -15,10 +15,10 @@ return new class extends Migration {
             $table->unsignedBigInteger('property_id');
             $table->unsignedBigInteger('service_id');
             $table->string('status');
-            $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
-            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->unique(['property_id', 'service_id']);
             $table->timestamps();
+            $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
+            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
         });
     }
 

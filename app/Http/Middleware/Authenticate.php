@@ -12,6 +12,10 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        if (request()->getHost() == 'customer.topsidefacilities.test') {
+            return $request->expectsJson() ? null : route('customerlogin');
+        }
+        return $request->expectsJson() ? null : route('adminlogin');
+
     }
 }

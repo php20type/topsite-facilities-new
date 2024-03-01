@@ -18,8 +18,8 @@ class CreatePropertyMediaTable extends Migration
             $table->unsignedBigInteger('property_id');
             $table->enum('category', ['indoor', 'outdoor']);
             $table->string('file_path');
-            $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
             $table->timestamps();
+            $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
         });
     }
 

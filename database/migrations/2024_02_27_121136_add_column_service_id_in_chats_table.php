@@ -10,8 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dateTime('approve_at')->after('is_approve')->nullable();
+        Schema::table('chats', function (Blueprint $table) {
+            //
+            $table->integer('service_id')->nullable();
         });
     }
 
@@ -20,8 +21,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('approve_at');
+        Schema::table('chats', function (Blueprint $table) {
+            //
+            $table->dropColumn('service_id');
         });
     }
 };

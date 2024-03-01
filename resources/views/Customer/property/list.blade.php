@@ -119,7 +119,7 @@
                 <form class="search-property position-relative me-3" action="" id="search-property-form">
                     <input type="text" id="search-property-input" placeholder="Search Property..."
                         class="form-control" />
-                    <input type="hidden" id="user_id" value="{{ Auth::guard('user')->user()->id }}"
+                    <input type="hidden" id="user_id" value="{{ Auth::user()->id }}"
                         class="form-control" />
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
                 </form>
@@ -135,7 +135,7 @@
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </a>
-                    <a href="#">
+                    <a href="{{ route('user.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
                             fill="none">
                             <rect width="48.0001" height="48" rx="10" fill="#389BFE" />
@@ -306,7 +306,7 @@
             propertyDetailsElements.forEach(function(element) {
                 element.addEventListener('click', function() {
                     var propertyId = element.getAttribute('data-id');
-                    var url = "{{ url('user/property/') }}/" + propertyId;
+                    var url = "{{ url('property/') }}/" + propertyId;
                     window.location.href = url;
                 });
             });

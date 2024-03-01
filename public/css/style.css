@@ -489,6 +489,13 @@ title {
 .PropertyForm .form-group .form-select {
     /* padding-left: 40px; */
 }
+.select2-container--default .select2-selection--multiple {
+    background-color: #f0f7fe !important;
+    border: 1px solid #868686 !important;
+    border-radius: 4px !important;
+    cursor: text !important;
+    padding: 16px 20px !important;
+}
 .PropertyForm .form-group .lab-style {
     width: auto;
     height: 1.3em;
@@ -997,7 +1004,7 @@ title {
 
 .content-chat-message-user {
     width: 100%;
-    height: calc(100vh - 20vh);
+    /* height: calc(100vh - 20vh); */
     position: relative;
     border-radius: 6px;
     background: linear-gradient(121deg, #FFF 10.96%, #FFF 72%, #FFF 99.98%);
@@ -1284,6 +1291,43 @@ title {
  position: relative;
  padding: 20px 0;
 }
+.indoor_media .delete-media {
+    border: none;
+        right: 0;
+        background: #fff;
+        margin: 0px !important;
+        padding: 0;
+        position: absolute;
+        top: -5px;
+        border-radius: 100%;
+}
+.indoor_media .delete-media i {
+    background: #389bfe;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 100%;
+    color: #ffffff;
+      }
+.outdoor_media .delete-media {
+border: none;
+    right: 0;
+    background: #fff;
+    margin: 0px !important;
+    padding: 0;
+    position: absolute;
+    top: -5px;
+    border-radius: 100%;
+}
+
+.outdoor_media .delete-media i {
+    background: #389bfe;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 100%;
+    color: #ffffff;
+}
 .Bottom-action-sec .more-button button {
     border-radius: 5px;
     background: #31903C;
@@ -1357,10 +1401,7 @@ margin-bottom: 20px;
     .body-chat-message-user {
         height: 360px;
     }
-.content-chat-message-user {
-    width: 100%;
-    height: calc(100vh - 15vh);
-}
+
 }
 @media screen and (min-width: 992px) {
     .app-sidebar #close { 

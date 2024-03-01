@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Property;
 use App\Models\Chat;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceController extends Controller
 {
@@ -43,7 +44,7 @@ class ServiceController extends Controller
         $property = Property::findOrFail($propertyId);
         $services = $property->services()->get();
         $messages = Chat::orderBy('created_at', 'asc')->get();
-        return view('admin.services.show', compact('service', 'property', 'services', 'messages'));
+        return view('admin.services.show', compact('service', 'property', 'services', 'messages', 'serviceId'));
     }
 
     /**

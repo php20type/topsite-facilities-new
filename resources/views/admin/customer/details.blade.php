@@ -42,7 +42,7 @@
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </a>
-                    <a href="#">
+                    <a href="{{ route('admin.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
                             fill="none">
                             <rect width="48.0001" height="48" rx="10" fill="#389BFE" />
@@ -203,8 +203,9 @@
                         </ul>
                     </div>
                     <div class="InventoryImages">
-                      @foreach ($indoorMedia as $media)
                             <div class="indoor_media">
+                      @foreach ($indoorMedia as $media)
+                      <div class="image_media">
                                 <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
                                     @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
                                         <video controls class="img-fluid">
@@ -215,11 +216,13 @@
                                         <img src="{{ asset('storage/' . $media->file_path) }}" alt="" class="img-fluid">
                                     @endif
                                 </a>
-                            </div>
+                                </div>
                         @endforeach
-
-                        @foreach ($outdoorMedia as $media)
+                            </div>
                             <div class="outdoor_media">
+                        @foreach ($outdoorMedia as $media)
+                      <div class="image_media">
+
                                 <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
                                     @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
                                         <video controls class="img-fluid">
@@ -227,21 +230,21 @@
                                             Your browser does not support the video tag.
                                         </video>
                                     @else
-                                        <a href="#" class="img-fluid">
                                             <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
-                                        </a>
                                     @endif
                                 </a>    
-                            </div>
+                      </div>
                         @endforeach
+                            </div>
+
                     </div>
                     <input type="hidden" id="indoor_page" value="1">
                     <input type="hidden" id="outdoor_page" value="1">
                     <div class="Bottom-action-sec">
                         <div class="switches-container">
                             <input type="radio" id="switchIndoor" name="switchPlan" value="Indoor"
-                                checked="checked" />
-                            <input type="radio" id="switchOutdoor" name="switchPlan" value="Outdoor" />
+                                checked="checked"  data-property_id="{{ $property->id }}" />
+                            <input type="radio" id="switchOutdoor" name="switchPlan" value="Outdoor"  data-property_id="{{ $property->id }}"/>
                             <label for="switchIndoor">Indoor</label>
                             <label for="switchOutdoor">Outdoor</label>
                             <div class="switch-wrapper">
@@ -315,7 +318,7 @@
                                         </div>
                                     </label>
                                 </form>
-                                @if($property->propertyDocument == null)
+                                @if($property->propertyDocument !== null)
                                 @foreach ($property->propertyDocument as $document)
                                     <div class="BodyInnerSec">
                                         <div class="PaperWork">
@@ -362,47 +365,6 @@
             }
         });
 
-        document.getElementById('loadMoreButton').addEventListener('click', function() {
-            if ($("#switchIndoor").is(":checked")) {
-                var category = 'indoor';
-            } else {
-                var category = 'outdoor';
-            }
-
-            var property_id = this.dataset.property_id;
-            var page = category === 'indoor' ? $('#indoor_page') : $('#outdoor_page');
-
-            $.ajax({
-                url: '/user/fetch-more-media',
-                method: 'GET',
-                data: {
-                    category: category,
-                    property: this.dataset.property_id,
-                    page: page.val(),
-                },
-                success: function(response) {
-
-                    if (category == 'indoor') {
-                        var nextPage = parseInt(page.val()) + 1;
-                        document.getElementById('indoor_page').value = nextPage;
-                    } else {
-                        var nextPage = parseInt(page.val()) + 1;
-                        document.getElementById('outdoor_page').value = nextPage;
-                    }
-
-                    var mediaContainer = category === 'indoor' ? $('.indoor_media') : $(
-                        '.outdoor_media');
-
-                    response.forEach(function(media) {
-                        var mediaElement = createMediaElement(media);
-                        mediaContainer.append(mediaElement);
-                    });
-                },
-                error: function(error) {
-                    console.error(error);
-                }
-            });
-        });
         
         $("input[name='switchPlan']").change(function() {
              $('#loadMoreButton').hide();
@@ -412,13 +374,13 @@
 
                 var property_id = this.dataset.property_id;
                 var page = $('#indoor_page');
-
+                console.log('property_id',property_id);
                 $.ajax({
-                    url: '/user/fetch-more-media',
+                    url: '/fetch-more-media',
                     method: 'GET',
                     data: {
                         category: 'indoor',
-                        property: this.property_id,
+                        property: property_id,
                         page: page.val(),
                     },
                     success: function(response) {
@@ -438,13 +400,14 @@
 
                 var property_id = this.dataset.property_id;
                 var page = $('#outdoor_page');
+                console.log('property_id',property_id);
 
                 $.ajax({
-                    url: '/user/fetch-more-media',
+                    url: '/fetch-more-media',
                     method: 'GET',
                     data: {
                         category: 'outdoor',
-                        property: this.property_id,
+                        property: property_id,
                         page: page.val(),
                     },
                     success: function(response) {
@@ -472,12 +435,12 @@
             var page = category === 'indoor' ? $('#indoor_page') : $('#outdoor_page');
 
             $.ajax({
-                url: '/user/fetch-more-media',
+                url: '/fetch-more-media',
                 method: 'GET',
                 data: {
                     category: category,
                     property: this.dataset.property_id,
-                    page: page.val(),
+                    page: parseInt(page.val())+1,
                 },
                 success: function(response) {
                     if (response.status === 'no_more_media' || response.status === 'not_found') {
@@ -514,10 +477,10 @@
 
            if (isVideo) {
                 return $('<div class="video_media"><a href="' + mediaPath + '" target="_blank class="media-link"><video controls class="img-fluid"><source src="' + mediaPath +
-                    '" type="video/mp4">Your browser does not support the video tag.</video></a></div>');
+                    '" type="video/mp4" >Your browser does not support the video tag.</video></a></div>');
             } else {
                 return $('<div class="image_media"><a href="' + mediaPath + '" target="_blank class="media-link img-fluid"><img src="' + mediaPath +
-                    '" alt=""></a></div>');
+                    '" alt="" class="img-fluid"></a></div>');
             }
 
         }
@@ -599,7 +562,7 @@
                 },
                 success: function(response) {
                     // Remove the document entry from the DOM
-                    toastr.error('Document deleted successfully!', 'Delete', { positionClass: 'toast-top-right' });
+                    toastr.success('Document deleted successfully!', 'Delete', { positionClass: 'toast-top-right' });
                     documentEntry.remove();
                 },
                 error: function(xhr, status, error) {
