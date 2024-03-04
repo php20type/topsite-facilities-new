@@ -10,7 +10,7 @@
             <div class="login_header text-center">
                 <img src="{{ URL::asset('img/logo/logo.svg') }}" alt="logo">
                 <h2 class="card-header"> {{ isset($url) ? ucwords($url) : '' }} {{ __('Register') }}</h2>
-                <p>Already have an account <span><a href="{{ route('login.user') }}">Login!</a></span></p>
+                <p>Already have an account <span><a href="{{ route('customerlogin') }}">Login!</a></span></p>
             </div>
             @isset($url)
                 <form class="singup-form-sec" method="POST" action="{{ url("register/$url") }}" aria-label="{{ __('Register') }}">

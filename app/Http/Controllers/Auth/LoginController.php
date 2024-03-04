@@ -162,24 +162,37 @@ class LoginController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-
-            if ($user->is_admin) {
-                // Admin user
-                $token = md5(uniqid());
-                $user->update(['token' => $token]);
-
-                return redirect()->route('admin.customer.index');
-            } else {
-                // Regular user
-                if ($user->approve_at !== null && $user->is_approve == 1) {
+            if (request()->getHttpHost() === 'admin.topsidefacilities.test') {
+                if ($user->is_admin) {
+                    // Admin user
                     $token = md5(uniqid());
                     $user->update(['token' => $token]);
 
-                    return redirect()->route('user.property.index');
+                    return redirect()->route('admin.customer.index');
                 } else {
-                    return redirect('/thank-you');
+                    return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors([
+                        'error' => 'Invalid email or password. Please try again.',
+                    ]);
+                }
+            } else {
+
+                if ($user->is_admin) {
+                    return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors([
+                        'error' => 'Invalid email or password. Please try again.',
+                    ]);
+                } else {
+                    // Regular user
+                    if ($user->approve_at !== null && $user->is_approve == 1) {
+                        $token = md5(uniqid());
+                        $user->update(['token' => $token]);
+
+                        return redirect()->route('user.property.index');
+                    } else {
+                        return redirect('/thank-you');
+                    }
                 }
             }
+
         } else {
             // Login attempt failed
             return redirect()->back()->withInput($request->only('email', 'remember'))->withErrors([
