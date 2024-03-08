@@ -32,7 +32,7 @@
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
                 </form> --}}
                 <div class="action-button">
-                    <a href="#" class="me-2 position-relative">
+                    <a href="#" class="me-3 position-relative">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                             <rect width="48" height="48" rx="10" fill="#389BFE" />
                             <path fill-rule="evenodd" clip-rule="evenodd"

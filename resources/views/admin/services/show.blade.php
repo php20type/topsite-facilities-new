@@ -11,24 +11,7 @@
     </script>
 
          <style>
-            #chat_area {
-                min-height: 500px;
-                /*overflow-y: scroll*/
-                ;
-            }
-            #chat_history {
-                min-height: 500px;
-                max-height: 500px;
-                overflow-y: auto;
-                margin-bottom: 16px;
-                background-color: #ffffff;
-                padding: 16px;
-            }
-            #user_list {
-                min-height: 500px;
-                max-height: 500px;
-                overflow-y: scroll;
-            }
+           
 
         </style>
 @endsection
@@ -80,7 +63,7 @@
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
                 </form>
                 <div class="action-button">
-                    <a href="#" class="me-2 position-relative">
+                    <a href="#" class="me-3 position-relative">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                             <rect width="48" height="48" rx="10" fill="#389BFE" />
                             <path fill-rule="evenodd" clip-rule="evenodd"

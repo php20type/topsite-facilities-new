@@ -11,26 +11,7 @@
     </script>
 
          <style>
-            #chat_area {
-                min-height: 500px;
-                /*overflow-y: scroll*/
-                ;
-            }
-
-            #chat_history {
-                min-height: 500px;
-                max-height: 500px;
-                overflow-y: scroll;
-                margin-bottom: 16px;
-                background-color: #ece5dd;
-                padding: 16px;
-            }
-
-            #user_list {
-                min-height: 500px;
-                max-height: 500px;
-                overflow-y: scroll;
-            }
+          
         </style>
 @endsection
 @section('content')
@@ -58,6 +39,7 @@
     <div class="main-content app-content">
         <!-- Header section start -->
         <div class="top-header">
+        <div class="left-content">
             <div class="sidemenu-toggle">
                 <a href="javascript:void(0)" id="menu-toggle">
                     <svg width="46" height="46" viewBox="0 0 46 46" fill="none"
@@ -73,13 +55,14 @@
             <div class="title-header ms-4">
                 <h2>Work Progress</h2>
             </div>
+        </div>
             <div class="right-content">
                 <form class="search-property position-relative me-3" action="" id="">
                     <input type="text" placeholder="Search Property..." class="form-control" />
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
                 </form>
                 <div class="action-button">
-                    <a href="#" class="me-2">
+                    <a href="#" class="me-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
                             fill="none">
                             <rect width="48" height="48" rx="10" fill="#389BFE" />
@@ -153,8 +136,7 @@
                             </div>
                         
                     </div>
-                </div>
-
+              
                  <div class="row">
         {{-- <div class="col-sm-4 col-lg-3">
             <div class="card">
