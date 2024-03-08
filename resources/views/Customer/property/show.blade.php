@@ -402,7 +402,7 @@
                                                     case 'In Progress':
                                                         $buttonClass = 'Progress';
                                                         break;
-                                                    case 'NEW':
+                                                    case 'New':
                                                         $buttonClass = 'new';
                                                         break;
                                                     case 'Done':

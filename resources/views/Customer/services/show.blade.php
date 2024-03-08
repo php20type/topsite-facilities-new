@@ -136,21 +136,19 @@
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                    Dropdown Menu
+                                    {{ $status }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    @foreach ($property->services as $ser)
-                                        @if ($service->id == $ser->id)
-                                            @if ($ser->pivot->status === 'NEW')
-                                                <li><a class="dropdown-item" href="#">In Progress</a></li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
-                                            @elseif($ser->pivot->status === 'In Progress')
-                                                <li><a class="dropdown-item" href="#">Ready for Review</a></li>
-                                            @endif
-                                        @endif
-                                    @endforeach
+                                    @if ($status === 'New')
+                                        <li></li>
+                                    @elseif ($status === 'In Progress')
+                                        <li></li>
+                                    @elseif ($status === 'Ready for Review')
+                                        <li><a class="dropdown-item" href="#" onclick="updateServiceStatus('Done')">Done</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="updateServiceStatus('New')">New</a></li>
+                                    @elseif ($status === 'Done')
+                                        <li><a class="dropdown-item" href="#" onclick="updateServiceStatus('New')">New</a></li>
+                                    @endif
                                 </ul>
                             </div>
                         
@@ -276,6 +274,41 @@
 @endsection
 @section('page_scripts')
     <script>
+    
+        function updateServiceStatus(newStatus) {
+            $.ajax({
+                url: '/customer-update-service-status',
+                method: 'POST',
+                data: {
+                    status: newStatus,
+                    service_id: {{ $service->id }},
+                    property_id: {{ $property->id }},
+                    "_token": "{{ csrf_token() }}",
+                },
+                success: function(response) {
+                    $('#dropdownMenuButton').text(newStatus);
+                    updateDropdownMenu(newStatus);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function updateDropdownMenu(newStatus) {
+            $('.dropdown-menu .dropdown-item').remove(); // Remove all dropdown menu items
+
+            // Add appropriate dropdown menu items based on the new status
+            if (newStatus === 'In Progress') {
+                $('.dropdown-menu').append('');
+            } else if (newStatus === 'Ready for Review') {
+                $('.dropdown-menu').append('<li><a class="dropdown-item" href="#" onclick="updateServiceStatus(\'Done\')">Done</a></li>');
+                $('.dropdown-menu').append('<li><a class="dropdown-item" href="#" onclick="updateServiceStatus(\'New\')">New</a></li>');
+            } else if (newStatus === 'Done') {
+                $('.dropdown-menu').append('<li><a class="dropdown-item" href="#" onclick="updateServiceStatus(\'New\')">New</a></li>');
+            }
+        }
+
         /* websocket chat module script */
             var conn = new WebSocket('ws://127.0.0.1:8090/?token={{ Auth::user()->token }}');
             var from_user_id = "{{ Auth::user()->id }}";
@@ -289,7 +322,7 @@
                 loadChatForLoggedInUser();
                 // load_unconnected_user(from_user_id); // Loads the list of users to chat with
                 // load_unread_notification(from_user_id); // Displays the list of notifications
-                // load_connected_chat_user(from_user_id); // Displays the list of users who approved chat_request
+                load_connected_chat_user(from_user_id);// Displays the list of users who approved chat_request
             };
 
             function loadChatForLoggedInUser() {
@@ -302,9 +335,7 @@
 
             // Called when a message is received
             conn.onmessage = function(e) {
-                console.log('on Message event');
                 var data = JSON.parse(e.data);
-                console.log(data);
                 if (data.image_link) {
                     //Display Code for uploaded Image
                     var imagePath = '{{ Storage::url('services_images/') }}' + data.image_link;
@@ -454,61 +485,69 @@
                 }
 
                 if (data.response_connected_chat_user) {
+                     console.log('data',data); 
                     // Displays the list of users who approved chat_request
-                    var html = '<div class="list-group">';
-
-                    if (data.data.length > 0) {
-                        for (var count = 0; count < data.data.length; count++) {
-                            html += `
-                        <a href="#" class="list-group-item d-flex justify-content-between align-items-start" onclick="make_chat_area(` +
-                                data.data[count].id + `, '` + data.data[count].name + `'); load_chat_data(` + from_user_id +
-                                `, ` + data.data[count].id + `); ">
-                            <div class="ms-2 me-auto">
-                        `;
-
-                            var last_seen = '';
-
-                            if (data.data[count].user_status == 'Online') {
+                     if (data.data[0].user_status == 'Online') {
                                 // Displays the online indicator
-                                html += '<span class="text-success online_status_icon" id="status_' + data.data[count].id +
-                                    '"><i class="fas fa-circle"></i></span>';
-
                                 last_seen = 'Online';
                             } else {
                                 // Offline indication
-                                html += '<span class="text-danger online_status_icon" id="status_' + data.data[count].id +
-                                    '"><i class="fas fa-circle"></i></span>';
-
                                 last_seen = data.data[count].last_seen;
                             }
+                            $('#last_seen').text(last_seen);
+                    // var html = '<div class="list-group">';
+                    // if (data.data.length > 0) {
+                    //     for (var count = 0; count < data.data.length; count++) {
+                    //         html += `
+                    //     <a href="#" class="list-group-item d-flex justify-content-between align-items-start" onclick="make_chat_area(` +
+                    //             data.data[count].id + `, '` + data.data[count].name + `'); load_chat_data(` + from_user_id +
+                    //             `, ` + data.data[count].id + `); ">
+                    //         <div class="ms-2 me-auto">
+                    //     `;
 
-                            var user_image = '';
+                    //         var last_seen = '';
 
-                            if (data.data[count].user_image != '') {
-                                user_image = `<img src="{{ asset('images/') }}/` + data.data[count].user_image +
-                                    `" width="35" class="rounded-circle" />`;
-                            } else {
-                                user_image =
-                                    `<img src="{{ asset('images/no-image.jpg') }}" width="35" class="rounded-circle" />`;
-                            }
+                    //         if (data.data[count].user_status == 'Online') {
+                    //             // Displays the online indicator
+                    //             html += '<span class="text-success online_status_icon" id="status_' + data.data[count].id +
+                    //                 '"><i class="fas fa-circle"></i></span>';
+
+                    //             last_seen = 'Online';
+                    //         } else {
+                    //             // Offline indication
+                    //             html += '<span class="text-danger online_status_icon" id="status_' + data.data[count].id +
+                    //                 '"><i class="fas fa-circle"></i></span>';
+
+                    //             last_seen = data.data[count].last_seen;
+                    //         }
+
+                    //         var user_image = '';
+
+                    //         if (data.data[count].user_image != '') {
+                    //             user_image = `<img src="{{ asset('images/') }}/` + data.data[count].user_image +
+                    //                 `" width="35" class="rounded-circle" />`;
+                    //         } else {
+                    //             user_image =
+                    //                 `<img src="{{ asset('images/no-image.jpg') }}" width="35" class="rounded-circle" />`;
+                    //         }
 
 
-                            html += `
-                                &nbsp; ` + user_image + `&nbsp;<b>` + data.data[count].name + `</b>
-                                <div class="text-right"><small class="text-muted last_seen" id="last_seen_` + data.data[count].id + `">` +
-                                last_seen + `</small></div>
-                            </div>
-                            <span class="user_unread_message" data-id="` + data.data[count].id + `" id="user_unread_message_` + data.data[
-                                    count].id + `"></span>
-                        </a>
-                        `;
-                        }
-                    } else {
-                        html += 'No User Found';
-                    }
+                    //         html += `
+                    //             &nbsp; ` + user_image + `&nbsp;<b>` + data.data[count].name + `</b>
+                    //             <div class="text-right"><small class="text-muted last_seen" id="last_seen_` + data.data[count].id + `">` +
+                    //             last_seen + `</small></div>
+                    //         </div>
+                    //         <span class="user_unread_message" data-id="` + data.data[count].id + `" id="user_unread_message_` + data.data[
+                    //                 count].id + `"></span>
+                    //     </a>
+                    //     `;
+                    //     }
+                    // } else {
+                    //     html += 'No User Found';
+                    // }
 
-                    html += '</div>';
-                    document.getElementById('user_list').innerHTML = html;
+                    // html += '</div>';
+                    // document.getElementById('user_list').innerHTML = html;
 
                     check_unread_message();
                 }

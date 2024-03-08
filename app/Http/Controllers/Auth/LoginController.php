@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Admin;
 use Illuminate\Http\Response;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -130,6 +131,11 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+
+        $user = Auth::user();
+        $user->token = null;
+        $user->last_login = Carbon::now();
+        $user->save();
 
         Auth::guard('web')->logout();
 

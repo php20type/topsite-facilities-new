@@ -40,11 +40,32 @@ class ServiceController extends Controller
      */
     public function show($propertyId, $serviceId)
     {
+        $user = Auth::user();
+        $notificationCount = $user->unreadNotifications->count();
         $service = Service::findOrFail($serviceId);
         $property = Property::findOrFail($propertyId);
         $services = $property->services()->get();
+        $status = $property->services()->where('services.id', $serviceId)->first()->pivot->status;
         $messages = Chat::orderBy('created_at', 'asc')->get();
-        return view('admin.services.show', compact('service', 'property', 'services', 'messages', 'serviceId'));
+        return view('admin.services.show', compact('service', 'property', 'services', 'messages', 'serviceId', 'notificationCount', 'status'));
+    }
+
+
+    public function updateServiceStatus(Request $request)
+    {
+        // Retrieve service and property IDs and the new status from the request
+        $serviceId = $request->input('service_id');
+        $propertyId = $request->input('property_id');
+        $newStatus = $request->input('status');
+
+        // Retrieve the property
+        $property = Property::findOrFail($propertyId);
+
+        // Update the status in the pivot table
+        $property->services()->updateExistingPivot($serviceId, ['status' => $newStatus]);
+
+        // Return a response (optional)
+        return response()->json(['message' => 'Status updated successfully'], 200);
     }
 
     /**

@@ -91,9 +91,9 @@ class PropertyController extends Controller
         // Get the selected service IDs from the form
         $selectedServices = $request->input('property_service_id');
 
-        // Attach selected services to the property with status "NEW"
+        // Attach selected services to the property with status "New"
         foreach ($selectedServices as $serviceId) {
-            $property->services()->attach($serviceId, ['status' => 'NEW']);
+            $property->services()->attach($serviceId, ['status' => 'New']);
         }
 
         // Handle indoor images
@@ -233,7 +233,7 @@ class PropertyController extends Controller
 
         // Attach new services
         foreach ($request->property_service_id as $serviceId) {
-            $property->services()->attach($serviceId, ['status' => 'NEW']);
+            $property->services()->attach($serviceId, ['status' => 'New']);
         }
 
         // Handle indoor images
