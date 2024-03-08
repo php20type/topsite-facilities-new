@@ -64,15 +64,15 @@
         <section class="ts-property-section">
             <div class="container-fluid">
                 <div class="table-responsive">
-                    <div class="row mb-lg-4 mb-3">
+                    <!-- <div class="row mb-lg-4 mb-3">
                         <div class="col-lg-6">
-                            <!-- <div class="search-client-sec">
-                                                                                                                                                                                                                                                                                                                                                                                                                                  <input type="text" class="form-control me-3" placeholder="Search clients" />
-                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
-                                                                                                                                                                                                                                                                                                                                                                                                                                  <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
-                                                                                                                                                                                                                                                                                                                                                                                                                             </div> -->
+                             <div class="search-client-sec">
+                                <input type="text" class="form-control me-3" placeholder="Search clients" />
+                                <a href="#" class="btn outline-btn me-2"><i class="fa-regular fa-magnifying-glass"></i></a>
+                                <a href="#" class="btn outline-btn"><i class="fa-regular fa-arrows-rotate"></i></a>
+                            </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <table id="clients-management" class="table">
                         <thead>
@@ -105,6 +105,9 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                <div class="table-responsive">
                     <table id="customer-list" class="table">
                         <thead>
                             <tr>

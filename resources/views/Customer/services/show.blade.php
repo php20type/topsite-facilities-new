@@ -120,8 +120,8 @@
                         </svg> &nbsp; Back </a>
                 </div>
                 <div class="content-chat-message-user">
-                    <div class="head-chat-message-user row">
-                        <div class="user-box-left-fix col-6">
+                    <div class="head-chat-message-user">
+                        <div class="user-box-left-fix">
                             <div class="user-round">
                                 <img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user photo" />
                             </div>
@@ -132,7 +132,7 @@
                         </div>
 
                         <!-- Example split danger button -->
-                        <div class="container col-2">
+                       
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -153,7 +153,7 @@
                                     @endforeach
                                 </ul>
                             </div>
-                        </div>
+                        
                     </div>
                 </div>
 

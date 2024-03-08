@@ -55,7 +55,7 @@ Route::group(['domain' => 'admin.topsidefacilities.test'], function () {
 
     Route::view('admin', '/admin/customer/list');
     Route::post('/admin-logout', [LoginController::class, 'logout'])->name('admin.logout');
-    Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile.index');
+    Route::get('profile', [ProfileController::class, 'adminProfile'])->name('admin.profile.index');
     Route::put('admin-profile/update', [ProfileController::class, 'adminUpdate'])->name('admin.profile.update');
     Route::resource('customer', CustomerController::class)->names('admin.customer');
     Route::get('/property-details/{id}', [CustomerController::class, 'propertyDetails'])->name('admin.property.details');

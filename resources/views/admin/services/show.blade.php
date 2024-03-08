@@ -16,21 +16,20 @@
                 /*overflow-y: scroll*/
                 ;
             }
-
             #chat_history {
                 min-height: 500px;
                 max-height: 500px;
-                overflow-y: scroll;
+                overflow-y: auto;
                 margin-bottom: 16px;
-                background-color: #ece5dd;
+                background-color: #ffffff;
                 padding: 16px;
             }
-
             #user_list {
                 min-height: 500px;
                 max-height: 500px;
                 overflow-y: scroll;
             }
+
         </style>
 @endsection
 @section('content')
@@ -58,6 +57,7 @@
     <div class="main-content app-content">
         <!-- Header section start -->
         <div class="top-header">
+            <div class="left-content">
             <div class="sidemenu-toggle">
                 <a href="javascript:void(0)" id="menu-toggle">
                     <svg width="46" height="46" viewBox="0 0 46 46" fill="none"
@@ -73,6 +73,7 @@
             <div class="title-header ms-4">
                 <h2>Work Progress</h2>
             </div>
+        </div>
             <div class="right-content">
                 <form class="search-property position-relative me-3" action="" id="">
                     <input type="text" placeholder="Search Property..." class="form-control" />
@@ -90,7 +91,7 @@
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </a>
-                    <a href="#">
+                    <a href="{{ route('admin.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
                             fill="none">
                             <rect width="48.0001" height="48" rx="10" fill="#389BFE" />
@@ -120,8 +121,8 @@
                         </svg> &nbsp; Back </a>
                 </div>
                 <div class="content-chat-message-user">
-                    <div class="head-chat-message-user row">
-                        <div class="user-box-left-fix col-6">
+                    <div class="head-chat-message-user">
+                        <div class="user-box-left-fix">
                             <div class="user-round">
                                 <img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user photo" />
                             </div>
@@ -133,7 +134,7 @@
                             </div>
                         </div>
                         <!-- Example split danger button -->
-                        <div class="container col-2">
+                       
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -154,7 +155,7 @@
                                     @endforeach
                                 </ul>
                             </div>
-                        </div>
+                        
                     </div>
                     <div class="col-12">
                         <div class="card">

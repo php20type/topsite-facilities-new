@@ -9,19 +9,21 @@
     <div class="main-content app-content">
         <!-- Header section start -->
         <div class="top-header">
-            <div class="sidemenu-toggle">
-                <a href="javascript:void(0)" id="menu-toggle">
-                    <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="1" y="1" width="44" height="44" rx="9" fill="#4DA6FF" fill-opacity="0.15"
-                            stroke="#4DA6FF" stroke-width="2"></rect>
-                        <rect x="13" y="14" width="10" height="3" rx="1.5" fill="#4DA6FF"></rect>
-                        <rect x="13" y="21" width="20" height="3" rx="1.5" fill="#4DA6FF"></rect>
-                        <rect x="23" y="28" width="10" height="3" rx="1.5" fill="#4DA6FF"></rect>
-                    </svg>
-                </a>
-            </div>
-            <div class="title-header ms-4">
-                <h2>Property Detail</h2>
+            <div class="left-content">
+                <div class="sidemenu-toggle">
+                    <a href="javascript:void(0)" id="menu-toggle">
+                        <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="1" y="1" width="44" height="44" rx="9" fill="#4DA6FF" fill-opacity="0.15"
+                                stroke="#4DA6FF" stroke-width="2"></rect>
+                            <rect x="13" y="14" width="10" height="3" rx="1.5" fill="#4DA6FF"></rect>
+                            <rect x="13" y="21" width="20" height="3" rx="1.5" fill="#4DA6FF"></rect>
+                            <rect x="23" y="28" width="10" height="3" rx="1.5" fill="#4DA6FF"></rect>
+                        </svg>
+                    </a>
+                </div>
+                <div class="title-header ms-4">
+                    <h2>Property Detail</h2>
+                </div>
             </div>
             <div class="right-content">
                 <form class="search-property position-relative me-3" action="" id="">

@@ -8,6 +8,7 @@
     <div class="main-content app-content">
         <!-- Header section start -->
         <div class="top-header">
+            <div class="left-content">
             <div class="sidemenu-toggle">
                 <a href="javascript:void(0)" id="menu-toggle">
                     <svg width="46" height="46" viewBox="0 0 46 46" fill="none"
@@ -22,6 +23,7 @@
             </div>
             <div class="title-header ms-4">
                 <h2>Profile</h2>
+            </div>
             </div>
             <div class="right-content">
                 {{-- <form class="search-property position-relative me-3" action="" id="">

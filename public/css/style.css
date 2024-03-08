@@ -224,7 +224,7 @@ title {
     color: #868686;
 }
 
-.singup-form-sec .login-submit input[type="submit"] {
+.singup-form-sec .login-submit .btn.btn-primary {
     width: 100%;
     border-radius: 5px;
     background: #2F80ED;
@@ -398,6 +398,26 @@ title {
     position: relative;
     padding: 30px 0;
 }
+.ts-property-section .profile-box {
+    display: flex;
+    align-items: center;
+}
+.ts-property-section .profile-box .user-svg img {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 100px;
+    margin-right: 10px;
+}
+.ts-property-section .profile-box .user-name {
+    color: var(--Accent_Color, #000723);
+    font-family: Josefin Sans;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 30px;
+    text-transform: uppercase;
+}
 .ts-property-section .ts-property-card-box {
     padding: 15px;
     margin-bottom: 30px;
@@ -419,6 +439,7 @@ title {
     font-weight: 700;
     line-height: 30px;
     padding-bottom: 15px;
+    text-transform: capitalize;
 }
 .property-card-info-sec p {
     color: var(--Grey_Color, #868686);
@@ -537,6 +558,7 @@ title {
     display: flex;
     align-items: baseline;
     gap: 45px;
+    flex-wrap: wrap;
 }
 .PropertyForm .form-group .AmenitiesForm .Bedroom {
     color: var(--Grey_Color, #868686);
@@ -568,6 +590,10 @@ title {
     font-style: normal;
     font-weight: 400;
     color: #ffffff;
+}
+.PropertyForm .form-group .select2-container {
+    box-sizing: border-box;
+    display: inline;
 }
 
 /* Property Detail CSS start*/
@@ -1009,13 +1035,24 @@ title {
     border-radius: 6px;
     background: linear-gradient(121deg, #FFF 10.96%, #FFF 72%, #FFF 99.98%);
     box-shadow: 0px 5px 60px 5px rgba(0, 51, 85, 0.10);
+    overflow: hidden;
 }
 .content-chat-message-user .head-chat-message-user {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 20px;
-    background: rgba(49, 144, 60, 0.05);
+    background: rgba(56, 155, 254, 0.1);
+}
+.content-chat-message-user .head-chat-message-user .dropdown .btn.btn-primary {
+    border-radius: 5px;
+    background: #389BFE;
+    color: #ffffff;
+    text-transform: uppercase;
+    border: 1px solid #389BFE;
+}
+.content-chat-message-user .head-chat-message-user .dropdown .btn.btn-primary:focus {
+    box-shadow: none;
 }
 .head-chat-message-user .user-box-left-fix {
     display: flex;
@@ -1336,7 +1373,7 @@ border: none;
     color: #FFF;
     font-family: Josefin Sans;
     font-size: 16px;
-    line-height: 12px;
+    line-height: normal;
     font-style: normal;
     font-weight: 700;
     text-transform: uppercase;
@@ -1346,16 +1383,16 @@ border: none;
 .dataTables_filter {
 margin-bottom: 20px;
 }
-#clients-management_wrapper {
+.ts-property-section .table-responsive
+ {
     padding: 20px;
     border-radius: 10px;
     background: linear-gradient(121deg, #FFF 10.96%, #FFF 72%, #FFF 99.98%);
-    box-shadow: 0px 5px 60px 5px rgba(0, 51, 85, 0.10);
+    margin-bottom: 40px;
     transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 .dataTables_wrapper .dataTables_filter input:focus {
     box-shadow: none;
-    border: none;
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button.current,
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
@@ -1372,6 +1409,15 @@ margin-bottom: 20px;
     padding: 16px 20px;
     border-color: #DDDDDD;
 }
+.table-responsive table tbody td .user-name a {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 14px;
+    color: #AAAAAA;
+    border-color: #DDDDDD;
+    text-transform: capitalize;
+}
 .table-responsive table thead {
     border-radius: 10px;
 }
@@ -1383,69 +1429,13 @@ margin-bottom: 20px;
     font-weight: 400;
     border-bottom: 1px solid #389BFE;
     vertical-align: middle;
+    border-bottom: none !important;
 }
-.table-responsive table thead th:first-child {
+/* .table-responsive table thead th:first-child {
     border-bottom-left-radius: 10px;
     border-top-left-radius: 10px;
-}
+} */
 
-
-/* Responsive Css Start */
-
-@media screen and (max-width: 1600px) {
-    .top-header .right-content .search-property {
-        flex: 0 0 60%;
-    }
-}
-@media screen and (max-width: 1540px) {
-    .body-chat-message-user {
-        height: 360px;
-    }
-
-}
-@media screen and (min-width: 992px) {
-    .app-sidebar #close { 
-        display: none;
-    }
-}
-
-@media screen and (max-width: 991px) {
-    .top-header .title-header {
-        flex: 0 0 30%;
-    }
-    .main-content.app-content {
-        margin-left: 15px;
-        margin-right: 15px;
-        max-width: calc(100% + -30px);
-    }
-    .app-sidebar {
-        margin-left: -300px;
-    }
-    .app-sidebar.hidden {
-        margin-left: 0;
-        background: #fff;
-        z-index: 1;
-    }
-    .sidebar-nav {
-        margin-left: 20px;
-    }
-    .app-sidebar #close i { 
-        width: 24px;
-        height: 24px;
-        background: #4da6ff;
-        border-radius: 50%;
-        text-align: center;
-        line-height: 26px;
-        font-size: 14px;
-        color: #ffffff;
-    }
-    .app-sidebar #close {
-        position: absolute;
-        right: 15px;
-        top: 10px;
-    }
-    
-}
 .PropertyForm .form-group .fa {
     font-family: 'Inter', 'Font Awesome 6 Pro';
    font-size: 14px;
@@ -1508,4 +1498,344 @@ margin-bottom: 20px;
     margin-right: 10px; /* Adjust as needed */
     margin-bottom: 10px; /* Adjust as needed */
 }
+.dataTables_wrapper .dataTables_filter input {
+    font-size: 16px;
+    color: #868686;
+    line-height: 23px;
+    border: 1px solid #868686;
+}
+.dataTables_wrapper .dataTables_filter input:focus-visible {
+    outline: none;
+}
 
+#chat_history .alert-success {
+    color: #868686;
+    padding: 18px 24px;
+    margin-bottom: 10px;
+    border-radius: 0px 10px 10px 10px;
+    border: 1px solid rgba(112, 124, 151, 0.25);
+    background: #ffffff;
+    box-shadow: none !important;
+}
+#chat_history .alert-light { 
+    background: #389BFE;
+    color: #ffffff !important;
+    border-color: #389BFE;
+    border-radius: 0px 10px 10px 10px;
+    box-shadow: none !important;
+}
+.content-chat-message-user .input-group #message_area.form-control {
+    min-height: 80px !important;
+    height: 80px !important;
+    overflow-y: auto;
+}
+.content-chat-message-user .input-group #message_area.form-control:focus {
+    box-shadow: none;
+}
+.content-chat-message-user .input-group .btn {
+    line-height: 65px !important;
+    padding: 0px 24px;
+}
+.content-chat-message-user .input-group .btn.btn-success {
+    background: #389BFE;
+    border-color: #389BFE;
+}
+.content-chat-message-user .input-group .btn.btn-warning {
+    color: #ffffff;
+    background-color: #31903b;
+    border-color: #31903b;
+}
+
+/* Responsive Css Start */
+
+@media screen and (max-width: 1600px) {
+    .body-chat-message-user {
+       height: 400px; 
+       margin: 40px 0 0;
+    }
+    .top-header .right-content .search-property {
+        flex: 0 0 60%;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .content-chat-message-user .head-chat-message-user {
+        padding: 14px;
+    }
+    .head-chat-message-user .user-box-left-fix .user-round {
+        width: 70px;
+        height: 70px;
+        padding: 12px;
+    }
+    .body-chat-message-user {
+        height: 380px;
+        margin: 20px 0 0;
+    }
+    .content-chat-message-user {
+        height: calc(100vh - 10vh);
+    }
+    .InventoryDetails .list-inline li {
+        margin-right: 2rem;
+        margin-bottom: 20px;
+    }
+    .login_content-form-sec .login_header p {
+        font-size: 16px;
+        line-height: 24px;
+        padding-bottom: 30px;
+    }
+    .login_content-form-sec .login_header h2 {
+        font-size: 32px;
+        line-height: 40px;
+        padding-bottom: 15px;
+    }
+}
+@media screen and (max-width: 1280px) {
+    .message-user-send .action-right-button a i, .message-user-send .action-left-button a i {
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
+    }
+    .head-chat-message-user .user-box-right-fix .edit-dots a {
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+    }
+    .head-chat-message-user .user-box-left-fix .user-info h6 {
+       line-height: 18px;
+        font-size: 14px;
+    }
+    .head-chat-message-user .user-box-left-fix .user-info h4 {
+        line-height: 20px;
+        font-size: 16px;
+    }
+    .head-chat-message-user .user-box-left-fix .user-round {
+        width: 60px;
+        height: 60px;
+        padding: 10px;
+    }
+    .top-header .left-content {
+        flex-basis: 50%;
+    }
+    .top-header .left-content .title-header.ms-4 {
+        margin-left: 1rem!important;
+    }
+    .top-header .title-header h2 {
+        font-size: 24px;
+        line-height: 24px;
+    }
+    .ts-property-section .ts-property-card-box {
+        padding: 20px;
+    }
+}
+@media screen and (min-width: 992px) {
+    .app-sidebar #close { 
+        display: none;
+    }
+}
+
+@media screen and (max-width: 991px) {
+   
+    .content-chat-message-user {
+        height: calc(100vh - 20vh);
+    }
+    .body-chat-message-user {
+        height: 480px;
+    }
+    .WorkSection .WorkCard {
+        margin-bottom: 20px;
+    }
+    .main-content.app-content.full-width {
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+      }
+    .ts-property-section .ts-property-card-box {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .top-header .title-header h2 {
+        font-size: 24px;
+        line-height: 24px;
+    }
+    .top-header .title-header {
+        flex: 0 0 40%;
+    }
+    .main-content.app-content {
+        padding: 15px;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+    .app-sidebar {
+        margin-left: -300px;
+    }
+    .app-sidebar.hidden {
+        margin-left: 0;
+        background: #fff;
+        z-index: 1;
+    }
+    .app-sidebar #close i { 
+        width: 24px;
+        height: 24px;
+        background: #4da6ff;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 26px;
+        font-size: 14px;
+        color: #ffffff;
+    }
+    .app-sidebar #close {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .ts-property-section .container-fluid {
+        padding: 0px;
+    }
+    .head-chat-message-user .user-box-left-fix {
+        padding-bottom: 20px;
+    }
+    .content-chat-message-user .head-chat-message-user {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .WorkSection .WorkCard .sec-title {
+        font-size: 18px;
+    }
+    .AmenitiesForm .custom-row {
+        gap: 20px;
+    }
+    .Bottom-action-sec .more-button button {
+        padding: 1rem 1.4rem;
+        font-size: 14px;
+    }
+    main.py-4 {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+    .top-header .title-header {
+        flex: 0 0 100%;
+    }
+    .top-header .right-content .search-property {
+        flex: 1;
+    }
+    .top-header .right-content {
+        justify-content: flex-start;
+    }
+    .main-content.app-content .top-header {
+        display: block;
+    }
+    .top-header .left-content {
+        width: 85%;
+        flex-basis: 100%;
+        margin-bottom: 15px;
+    }
+}
+@media screen and (max-width: 576px) {
+    .WorkSection .WorkCard .CardBody {
+        padding: 10px;
+    }
+    .content-chat-message-user .input-group .btn {
+        line-height: 54px !important;
+    }
+    .content-chat-message-user .input-group #message_area.form-control {
+        min-height: 60px !important;
+        height: 60px !important;
+    }
+    .InventoryDetails .list-inline li {
+        margin-right: 1rem;
+        width: calc(50% - 16px);
+    }
+    .body-chat-message-user {
+        height: 500px;
+    }
+    .footer-chat-message-user .message-user-send .form-control {
+        font-size: 16px;
+        line-height: 20px;
+    }
+    .body-chat-message-user .chat-active {
+        padding: 0px 0px 20px;
+    }
+    .app-sidebar .profile-header img,
+    .login_content-form-sec .login_header img {
+        width: 80px;
+    }
+    .login_content-form-sec {
+        width: 100%;
+        height: 100vh;
+    }
+    .singup-form-sec .login-submit input[type="submit"],
+    .singup-form-sec .form-control {
+        padding: 16px 20px;
+    }
+    .login_content-form-sec .login_header h2 {
+        font-size: 24px;
+        line-height: 30px;
+        padding-bottom: 15px;
+    }
+    .forgot-password > span:before, 
+    .forgot-password > span:after {
+        width: 30%;
+    }
+    .forgot-password > span {
+        font-size: 14px;
+    }
+    .WorkProgress .container-fluid {
+        padding: 0px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .head-chat-message-user .user-box-left-fix .user-info h6 {
+        line-height: 14px;
+        font-size: 12px;
+    }
+    .head-chat-message-user .user-box-left-fix .user-info h4 {
+        line-height: 16px;
+        font-size: 14px;
+    }
+    .head-chat-message-user .user-box-left-fix .user-info {
+        flex: 1;
+    }
+    .head-chat-message-user .user-box-left-fix .user-round img {
+        height: 35px;
+    }
+    .head-chat-message-user .user-box-left-fix .user-round {
+        width: 50px;
+        height: 50px;
+        padding: 10px;
+        flex-basis: 50px;
+    }
+    .head-chat-message-user .user-box-right-fix .edit-dots a.me-4 {
+        margin-right: 0.5rem!important;
+    }
+    .head-chat-message-user .user-box-right-fix .edit-dots a {
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
+    }
+    .head-chat-message-user .user-box-right-fix {
+        margin-left: 10px;
+        flex-basis: 100px;
+    }
+}
+@media screen and (max-width: 420px) {
+    .PropertyDetail .Inventorysection {
+        padding: 20px;
+    }
+    .InventoryImages {
+        padding: 0px;
+        gap: 5px;
+    }
+    .switches-container {
+        margin-bottom: 20px;
+    }
+    .Bottom-action-sec {
+        margin: 10px 0 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
