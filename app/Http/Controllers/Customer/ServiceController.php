@@ -42,7 +42,24 @@ class ServiceController extends Controller
         $service = Service::findOrFail($serviceId);
         $property = Property::findOrFail($propertyId);
         $services = $property->services()->get();
-        return view('customer.services.show', compact('service', 'property', 'services', 'serviceId'));
+        $status = $property->services()->where('services.id', $serviceId)->first()->pivot->status;
+        return view('customer.services.show', compact('service', 'property', 'services', 'serviceId', 'status'));
+    }
+    public function updateServiceStatus(Request $request)
+    {
+        // Retrieve service and property IDs and the new status from the request
+        $serviceId = $request->input('service_id');
+        $propertyId = $request->input('property_id');
+        $newStatus = $request->input('status');
+
+        // Retrieve the property
+        $property = Property::findOrFail($propertyId);
+
+        // Update the status in the pivot table
+        $property->services()->updateExistingPivot($serviceId, ['status' => $newStatus]);
+
+        // Return a response (optional)
+        return response()->json(['message' => 'Status updated successfully'], 200);
     }
 
     /**

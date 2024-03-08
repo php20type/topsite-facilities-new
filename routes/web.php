@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\RequestController;
 
@@ -39,8 +38,10 @@ Route::group(['domain' => 'customer.topsidefacilities.test'], function () {
         Route::get('profile', [ProfileController::class, 'index'])->name('user.profile.index');
         Route::put('profile/update', [ProfileController::class, 'update'])->name('user.profile.update');
         Route::resource('property', PropertyController::class)->names('user.property');
-        Route::get('property/{property}/services/{service}', [ServiceController::class, 'show'])->name('user.service.show');
+        Route::get('property/{property}/services/{service}', [App\Http\Controllers\Customer\ServiceController::class, 'show'])->name('user.service.show');
         Route::delete('/delete-media/{mediaId}', [PropertyController::class, 'deleteMedia'])->name('media.delete');
+        Route::post('/customer-update-service-status', [App\Http\Controllers\Customer\ServiceController::class, 'updateServiceStatus'])->name('customer-update-service-status');
+
     });
 });
 
@@ -55,14 +56,16 @@ Route::group(['domain' => 'admin.topsidefacilities.test'], function () {
 
     Route::view('admin', '/admin/customer/list');
     Route::post('/admin-logout', [LoginController::class, 'logout'])->name('admin.logout');
-    Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile.index');
+    Route::get('profile', [ProfileController::class, 'adminProfile'])->name('admin.profile.index');
     Route::put('admin-profile/update', [ProfileController::class, 'adminUpdate'])->name('admin.profile.update');
     Route::resource('customer', CustomerController::class)->names('admin.customer');
     Route::get('/property-details/{id}', [CustomerController::class, 'propertyDetails'])->name('admin.property.details');
     Route::get('/request', [RequestController::class, 'index'])->name('admin.request');
     Route::post('/search-properties', [CustomerController::class, 'searchProperties'])->name('search.properties');
     Route::post('/update-customer-status', [CustomerController::class, 'updateStatus'])->name('update.customer.status');
-    Route::get('property/{property}/services/{service}', [ServiceController::class, 'show'])->name('admin.service.show');
+    Route::get('property/{property}/services/{service}', [App\Http\Controllers\Admin\ServiceController::class, 'show'])->name('admin.service.show');
+    Route::post('/admin-update-service-status', [App\Http\Controllers\Admin\ServiceController::class, 'updateServiceStatus'])->name('admin-update-service-status');
+
 
 });
 

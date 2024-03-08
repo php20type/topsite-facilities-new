@@ -12,6 +12,7 @@ use App\Mail\CustomerApproveEmail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\UserNotification;
 
 use App\Models\User;
 
@@ -23,7 +24,9 @@ class CustomerController extends Controller
     public function index()
     {
         $users = User::where('is_approve', 1)->where('is_admin', 0)->get();
-        return view('admin.customer.list', compact('users'));
+        $user = Auth::user();
+        $notificationCount = $user->unreadNotifications->count();
+        return view('admin.customer.list', compact('users', 'notificationCount'));
     }
 
     /**
@@ -49,7 +52,9 @@ class CustomerController extends Controller
     {
         $properties = Property::with('propertyType')->where('user_id', $id)->orderBy('created_at', 'desc')->get();
         $users = User::find($id);
-        return view('admin.customer.show', compact('properties', 'users'));
+        $user = Auth::user();
+        $notificationCount = $user->unreadNotifications->count();
+        return view('admin.customer.show', compact('properties', 'users', 'notificationCount'));
     }
 
     /**
@@ -82,12 +87,13 @@ class CustomerController extends Controller
         $indoorMedia = $property->propertyMedia()->where('category', 'indoor')->take(1)->get();
         $outdoorMedia = $property->propertyMedia()->where('category', 'outdoor')->take(1)->get();
         $service = Service::all();
-
+        $user = Auth::user();
+        $notificationCount = $user->unreadNotifications->count();
         if (!$property) {
             return response()->view('errors.404', [], 404);
         }
 
-        return view('admin.customer.details', compact('property', 'indoorMedia', 'outdoorMedia', 'service'));
+        return view('admin.customer.details', compact('property', 'indoorMedia', 'outdoorMedia', 'service', 'notificationCount'));
     }
 
     public function searchProperties(Request $request)
@@ -120,6 +126,8 @@ class CustomerController extends Controller
             $message->from('topside@gmail.com', 'Alex');
         });
 
+        $user1 = Auth::user();
+        $user1->notify(new UserNotification($user1->email, 'Your custom message here'));
         // Mail::to($recipientEmail)->send(new CustomerApproveEmail());
 
         return response()->json(['message' => 'Status updated successfully'], 200);

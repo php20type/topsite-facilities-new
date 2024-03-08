@@ -34,9 +34,8 @@
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
                 </form> --}}
                 <div class="action-button">
-                    <a href="#" class="me-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
-                            fill="none">
+                    <a href="#" class="me-2 position-relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                             <rect width="48" height="48" rx="10" fill="#389BFE" />
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M24.5 29.8476C30.1392 29.8476 32.7481 29.1242 33 26.2205C33 23.3188 31.1812 23.5054 31.1812 19.9451C31.1812 17.1641 28.5452 14 24.5 14C20.4548 14 17.8188 17.1641 17.8188 19.9451C17.8188 23.5054 16 23.3188 16 26.2205C16.253 29.1352 18.8618 29.8476 24.5 29.8476Z"
@@ -44,6 +43,7 @@
                             <path opacity="0.4" d="M26.8889 32.8574C25.5247 34.3721 23.3967 34.3901 22.0195 32.8574"
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
+                        <span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle">{{ $notificationCount }}</span>
                     </a>
                     <a href="{{ route('admin.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
