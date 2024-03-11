@@ -15,7 +15,7 @@
             @isset($url)
                 <form class="singup-form-sec" method="POST" action="{{ url("register/$url") }}" aria-label="{{ __('Register') }}">
                 @else
-                    <form class="singup-form-sec" method="POST" action="{{ route('register') }}"
+                    <form class="singup-form-sec" method="POST" action="{{ route('CreateUser') }}"
                         aria-label="{{ __('Register') }}">
                     @endisset
                     @csrf

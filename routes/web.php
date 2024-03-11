@@ -26,8 +26,8 @@ Route::group(['domain' => 'customer.topsidefacilities.test'], function () {
     Route::view('/', 'auth.login', ['url' => 'user'])->name('customerlogin');
     // Define routes that do not require authentication
     Route::post('/login/user', [LoginController::class, 'login'])->name('login.user');
-    Route::get('/register/user', [RegisterController::class, 'showUserRegisterForm']);
-    Route::post('/register', [RegisterController::class, 'createUser'])->name('register');
+    Route::get('/register', [RegisterController::class, 'showUserRegisterForm'])->name('customer.register');
+    Route::post('/CreateUser', [RegisterController::class, 'createUser'])->name('CreateUser');
     Route::view('/thank-you', 'thank-you');
     Route::any('/user-logout', [LoginController::class, 'logout'])->name('user.logout');
 
