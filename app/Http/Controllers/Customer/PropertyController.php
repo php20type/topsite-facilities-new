@@ -8,8 +8,14 @@ use Illuminate\Http\Request;
 use App\Models\PropertyType;
 use App\Models\Service;
 use App\Models\Property;
+use App\Models\User;
 use App\Models\PropertyMedia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Exception;
+use Illuminate\Mail\Message;
+use App\Notifications\UserNotification;
+
 
 class PropertyController extends Controller
 {
@@ -28,7 +34,12 @@ class PropertyController extends Controller
     public function index()
     {
         $properties = Property::with('propertyType')->where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->get();
-        return view('customer.property.list', compact('properties'));
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('customerlogin');
+        }
+        $notificationCount = $user->unreadNotifications->count();
+        return view('customer.property.list', compact('properties', 'notificationCount'));
     }
 
     /**
@@ -42,6 +53,11 @@ class PropertyController extends Controller
         $types = PropertyType::pluck("name", "id");
         $data['types'] = $this->prependFontAwesomeIcon($types);
         $data['services'] = Service::pluck("name", "id");
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('customerlogin');
+        }
+        $data['notificationCount'] = $user->unreadNotifications->count();
         return view("customer.property.create", $data);
     }
 
@@ -90,10 +106,13 @@ class PropertyController extends Controller
 
         // Get the selected service IDs from the form
         $selectedServices = $request->input('property_service_id');
+        $services = [];
 
         // Attach selected services to the property with status "New"
         foreach ($selectedServices as $serviceId) {
+            $service = Service::findOrFail($serviceId);
             $property->services()->attach($serviceId, ['status' => 'New']);
+            $services[] = $service->name;
         }
 
         // Handle indoor images
@@ -122,7 +141,61 @@ class PropertyController extends Controller
             }
         }
 
+        try {
+            $recipientEmail = 'crazycoder09@gmail.com'; // Auth::user()->email
+            $email_subject = 'Your property is visible now.';
+            $user_name = Auth::user()->name;
+            $property_link = route('user.property.show', ['property' => $property->id]);
+            $property_name = $property->name;
+
+            // Generate HTML content
+            $htmlContent = "<p>Your property is added to the portal and visible to us with your requirements and we hope to move ahead together on accomplishing the same.</p>";
+            $htmlContent .= "<p>Property name: {$property_name}</p>";
+            $htmlContent .= "<p>Property page: {$property_link}</p>";
+
+            // Send email with blade view
+            Mail::send('emails.email', ['htmlContent' => $htmlContent, 'user_name' => $user_name], function ($message) use ($recipientEmail, $email_subject) {
+                $message->to($recipientEmail)
+                    ->subject($email_subject)
+                    ->from('topside@gmail.com', 'Alex');
+            });
+
+            $user = Auth::user();
+            $user->notify(new UserNotification($user->email, "You added {$property_name}", "admin@gmail.com", $property_link));
+
+        } catch (Exception $e) {
+            return "Failed to send email: " . $e->getMessage();
+        }
+
+        try {
+            $recipientEmail = 'crazycoder09@gmail.com';
+            $user = Auth::user()->name;
+            $email_subject = 'A property is added by ' . $user . ' and needs your attention.';
+            $property_link = route('admin.property.details', ['id' => $property->id]);
+            $property_name = $property->name;
+            $service_requested = implode(', ', $services);
+            $user_name = 'Team';
+
+            // Generate HTML content
+            $htmlContent = "<p>A property is added by {$user}, so have a look at the same at the earliest and proceed with the requirements as below:</p>";
+            $htmlContent .= "<p>Property name: {$property_name}</p>";
+            $htmlContent .= "<p>Property page: {$property_link}</p>";
+            $htmlContent .= "<p>Services required: {$service_requested}.</p>";
+
+            // Send email with blade view
+            Mail::send('emails.email', ['htmlContent' => $htmlContent, 'user_name' => $user_name], function ($message) use ($recipientEmail, $email_subject) {
+                $message->to($recipientEmail)
+                    ->subject($email_subject)
+                    ->from('topside@gmail.com', 'Alex');
+            });
+            $admin = User::find(1);
+            $admin->notify(new UserNotification($admin->email, "A new property is added by {$user}: {$property_name}.", $property->user->email, $property_link));
+
+        } catch (Exception $e) {
+            return "Failed to send email: " . $e->getMessage();
+        }
         return redirect()->route('user.property.index')->with('success', 'Property created successfully!');
+
     }
 
     /**
@@ -136,12 +209,17 @@ class PropertyController extends Controller
         $property = Property::with('propertyType', 'propertyMedia', 'propertyDocument')->find($id);
         $indoorMedia = $property->propertyMedia()->where('category', 'indoor')->take(1)->get();
         $outdoorMedia = $property->propertyMedia()->where('category', 'outdoor')->take(1)->get();
-
+        $services = Service::all();
         if (!$property) {
             return response()->view('errors.404', [], 404);
         }
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('customerlogin');
+        }
+        $notificationCount = $user->unreadNotifications->count();
 
-        return view('customer.property.show', compact('property', 'indoorMedia', 'outdoorMedia'));
+        return view('customer.property.show', compact('property', 'indoorMedia', 'outdoorMedia', 'services', 'notificationCount'));
     }
 
     public function fetchMoreMedia(Request $request)
@@ -190,13 +268,16 @@ class PropertyController extends Controller
      */
     public function edit($id)
     {
-
         $data = array();
         $data['property'] = Property::with('propertyType', 'propertyMedia', 'propertyDocument', 'services')->find($id);
         $types = PropertyType::pluck("name", "id");
         $data['types'] = $this->prependFontAwesomeIcon($types);
         $data['services'] = Service::pluck("name", "id");
-
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('customerlogin');
+        }
+        $data['notificationCount'] = $user->unreadNotifications->count();
         return view("customer.property.create", $data);
     }
 
@@ -325,6 +406,47 @@ class PropertyController extends Controller
             // Return a response indicating error
             return response()->json(['status' => 404, 'message' => 'Media not deleted!'], 404);
         }
+    }
+
+    public function addServices(Request $request)
+    {
+        // Retrieve the property
+        $property = Property::findOrFail($request->input('property_id'));
+        $serviceNames = [];
+        // Attach selected services to the property with status "New"
+        foreach ($request->input('services') as $serviceId) {
+            $service = Service::findOrFail($serviceId);
+            $serviceNames[] = $service->name;
+            $property->services()->attach($serviceId, ['status' => 'New']);
+        }
+        $combinedServiceNames = implode(', ', $serviceNames);
+
+        try {
+            $recipientEmail = 'crazycoder09@gmail.com';
+            $email_subject = 'A new service request has been raised.';
+            $user_name = 'Team';
+            $property_link = route('admin.property.details', ['id' => $property->id]);
+            $property_name = $property->name;
+
+            // Generate HTML content
+            $htmlContent = " {$property->user->name}  requested a new service for {$combinedServiceNames} on {$property_name} property,</p>";
+            $htmlContent .= "<p> so kindly follow through from here : <a href=\"{$property_link}\">{$property_link}</a></p>";
+
+            // Send email with blade view
+            Mail::send('emails.email', ['htmlContent' => $htmlContent, 'user_name' => $user_name], function ($message) use ($recipientEmail, $email_subject) {
+                $message->to($recipientEmail)
+                    ->subject($email_subject)
+                    ->from('topside@gmail.com', 'Alex');
+            });
+
+            $admin = User::find(1);
+            $admin->notify(new UserNotification($admin->email, " {$property->user->name} added a new request for {$combinedServiceNames} on  {$property_name}.", $property->user->email, $property_link));
+
+        } catch (Exception $e) {
+            return "Failed to send email: " . $e->getMessage();
+        }
+        // Return a success response
+        return response()->json(['message' => 'Services added to property successfully']);
     }
 
 }

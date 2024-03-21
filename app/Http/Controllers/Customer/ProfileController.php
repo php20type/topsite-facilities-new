@@ -14,7 +14,8 @@ class ProfileController extends Controller
     public function index()
     {
         $user = User::findorFail(Auth::user()->id);
-        return view('customer.profile.index', compact('user'));
+        $notificationCount = $user->unreadNotifications->count();
+        return view('customer.profile.index', compact('user', 'notificationCount'));
     }
 
     public function update(Request $request)
@@ -50,7 +51,8 @@ class ProfileController extends Controller
     {
         if (Auth::check()) {
             $user = User::findorFail(Auth::user()->id);
-            return view('admin.profile.index', compact('user'));
+            $notificationCount = $user->unreadNotifications->count();
+            return view('admin.profile.index', compact('user', 'notificationCount'));
         } else {
             return redirect()->to('/');
         }

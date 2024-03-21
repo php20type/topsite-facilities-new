@@ -11,7 +11,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Events\UserRegistered;
-
+use Illuminate\Support\Facades\Mail;
+use Exception;
+use Illuminate\Mail\Message;
+use App\Notifications\UserNotification;
 
 class RegisterController extends Controller
 {
@@ -92,9 +95,39 @@ class RegisterController extends Controller
             'token' => md5(uniqid())
         ]);
 
-        // Dispatch the UserRegistered event
-        event(new UserRegistered($user));
+        try {
+            $recipientEmail = 'crazycoder09@gmail.com';
+            $email_subject = 'A new user registration is requested to be approved.';
+            $user_name = 'Team'; // Assuming you want to use 'Team' as the user name if $user is not defined
 
-        return redirect()->intended('login/user');
+            // Assuming $user is supposed to be a variable containing user information
+            $user = $user ?? (object) ['name' => 'Unknown'];
+
+            // Extracting user name from $user
+            $user_name = isset ($user->name) ? $user->name : $user_name;
+
+            $request_link = route('admin.request');
+
+            $htmlContent = "<p>{$user_name} has requested for a new account on the portal. Please verify the details shared and approve the request by clicking the link below:</p>";
+            $htmlContent .= "<p><a href=\"{$request_link}\">Approve Request</a></p>";
+
+            Mail::send('emails.email', [
+                'user_name' => $user_name,
+                'htmlContent' => $htmlContent,
+            ], function ($message) use ($recipientEmail, $email_subject) {
+                $message->to($recipientEmail)
+                    ->subject($email_subject)
+                    ->from('topside@gmail.com', 'Alex');
+            });
+
+            $admin = User::find(1);
+            // Assuming UserNotification expects recipient email, notification message, and sender email
+            $admin->notify(new UserNotification($admin->email, "A new account request is received from {$user_name}.", $user->email, $request_link));
+
+            return redirect()->route('customerlogin');
+        } catch (Exception $e) {
+            echo "Failed to send email: " . $e->getMessage();
+        }
+
     }
 }

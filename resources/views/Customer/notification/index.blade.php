@@ -1,9 +1,40 @@
 @extends('layouts.app', [
     'title' => 'Topside Facilities Management - property',
 ])
+@section('page_style')
+<style>
+.card.unread {
+    border-left: 3px solid red; /* Red border for unread notifications */
+    position: relative;
+}
+
+.card.unread::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    background-color: red; /* Red bullet */
+    border-radius: 50%; /* Shape it into a circle */
+    transform: translate(-50%, -50%);
+}
+.open-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #007bff; /* Button color */
+}
+
+.open-btn:hover {
+    color: #0056b3; /* Hover color */
+}
+</style>
+@endsection
 @section('content')
     <!-- dashboard screen start -->
     <aside class="app-sidebar">
+
         <div id="close"><a href="javascript:void(0)"><i class="fa-regular fa-xmark"></i></a></div>
         <div class="profile-header">
             <a href="#"><img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user" /></a>
@@ -31,7 +62,7 @@
                         My Properties
                     </a>
                 </li>
-                <li class="active">
+                <li class="">
                     <a href="{{ route('user.property.create') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="27" height="20" viewBox="0 0 27 20"
                             fill="none">
@@ -95,6 +126,7 @@
             </ul>
         </nav>
     </aside>
+
     <div class="main-content app-content">
         <!-- Header section start -->
         <div class="top-header">
@@ -112,9 +144,9 @@
                 </a>
             </div>
             <div class="title-header ms-4">
-                <h2>{{ !isset($property) ? "Add" : "Edit" }} Property</h2>
+                <h2>Notifications List</h2>
             </div>
-            </div>
+</div>
             <div class="right-content">
                 {{-- <form class="search-property position-relative me-3" action="" id="">
                     <input type="text" placeholder="Search Property..." class="form-control" />
@@ -149,39 +181,54 @@
         </div>
         <!-- Header section end -->
 
-        <!-- Add Property section start  -->
-        <section class="add-property-section">
-            <div class="container-fluid">
-                {{-- Check if the $property variable is set to determine if it's an edit or create form --}}
-                @if(isset($property))
-                    {{-- For edit form, use the update route and method --}}
-                    {{ Form::model($property, ['route' => ['user.property.update', $property->id], 'method' => 'PUT', 'files' => true, 'class' => 'PropertyForm']) }}
-                @else
-                    {{-- For create form, use the store route and method --}}
-                    {{ Form::open(['route' => 'user.property.store', 'method' => 'POST', 'files' => true, 'class' => 'PropertyForm']) }}
-                @endif
+        <!-- Add notification section start  -->
+        <div class="nottification-section py-lg-5 py-3">
+            <div class="container px-0">
                 <div class="row">
-                    @include('customer.property.form')
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <input type="submit" class="btn btn-primary" value="Submit">
+                    @foreach ($notifications as $notification)
+                        <div class="col-lg-12">
+                            <div class="card mb-3 {{ is_null($notification->read_at) ? 'unread' : '' }}">
+                                <div class="card-body">
+                                    <!-- Display notification content here -->
+                                    <h5 class="card-title">{{ $notification['data']['sender_id'] }}</h5>
+                                    <p class="card-text">{{ $notification['data']['message'] }}</p>
+                                    <!-- Open button -->
+                                    <a href="#" class="open-btn" data-notification-id="{{ $notification->id }}"><i class="fas fa-eye"></i></a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
-                {{ Form::close() }}
             </div>
+        </div>
 
-        </section>
-        <!-- Add Property section end  -->
+        <!-- Add notification section end  -->
 
     </div>
 @endsection
 @section('page_scripts')
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.form-select').selectpicker();
-
-            // Close all dropdowns with the 'form-select' class
-            $('.form-select').selectpicker('toggle');
+            $('.open-btn').on('click', function(e) {
+                e.preventDefault();
+                var notificationId = $(this).data('notification-id');
+                // Send AJAX request to mark notification as read
+                $.ajax({
+                    url: '{{ route('customer.mark.notification') }}',
+                    method: 'POST',
+                    data: {
+                        notification_id: notificationId,
+                        "_token": "{{ csrf_token() }}",
+                    },
+                    success: function(response) {
+                        // Redirect to the desired page
+                        window.location.href = response.redirect_to;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
         });
+</script>
 @endsection

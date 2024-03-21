@@ -63,7 +63,7 @@
                     <span class="search-svg"><img src="{{ URL::asset('img/home/search.svg') }}"></span>
                 </form>
                 <div class="action-button">
-                    <a href="#" class="me-3 position-relative">
+                    <a href="{{ route('admin.notifications.index') }}" class="me-3 position-relative">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                             <rect width="48" height="48" rx="10" fill="#389BFE" />
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -328,11 +328,37 @@
             // Called when a new WebSocket connection is established
             conn.onopen = function(e) {
                 loadChatForLoggedInUser();
+                // var data = JSON.parse(e.data);
+                // if (data.unread_message_count) {
+                //     updateUnreadMessageCount(data.user_id, data.unread_message_count);
+                // }
+
+                // if (data.online_status !== undefined && data.last_seen !== undefined) {
+                //     updateOnlineStatusAndLastSeen(data.online_status, data.last_seen);
+                // }
+
                 // load_unconnected_user(from_user_id); // Loads the list of users to chat with
                 // load_unread_notification(from_user_id); // Displays the list of notifications
                 load_connected_chat_user(from_user_id); // Displays the list of users who approved chat_request
             };
             
+            // function updateUnreadMessageCount(userId, count) {
+            //     var unreadMessageElement = document.getElementById('user_unread_message_' + userId);
+            //     if (unreadMessageElement) {
+            //         unreadMessageElement.innerHTML = '<span class="badge bg-primary rounded-pill">' + count + '</span>';
+            //     }
+            // }
+            
+            // function updateOnlineStatusAndLastSeen(onlineStatus, lastSeen) {
+            //     var onlineStatusElement = document.getElementById('online_status');
+            //     var lastSeenElement = document.getElementById('last_seen');
+
+            //     if (onlineStatusElement && lastSeenElement) {
+            //         onlineStatusElement.textContent = onlineStatus;
+            //         lastSeenElement.textContent = lastSeen;
+            //     }
+            // }
+
             function loadChatForLoggedInUser() {
                 // Assume you have the necessary data for the logged-in user, such as user ID and user name
                  make_chat_area(to_user_id, to_user_name);

@@ -16,6 +16,10 @@ class RequestController extends Controller
     public function index()
     {
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('adminlogin');
+        }
+
         $notificationCount = $user->unreadNotifications->count();
         $users = User::where('is_approve', 0)->where('is_admin', 0)->get();
         $requests = User::where('is_approve', 1)->where('is_admin', 0)->get();

@@ -33,7 +33,7 @@
                     </span>
                 </form>
                 <div class="action-button">
-                    <a href="#" class="me-2 position-relative">
+                    <a href="{{ route('admin.notifications.index') }}" class="me-2 position-relative">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                             <rect width="48" height="48" rx="10" fill="#389BFE" />
                             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -232,7 +232,7 @@
                                             Your browser does not support the video tag.
                                         </video>
                                     @else
-                                            <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
+                                            <img src="{{ asset('storage/' . $media->file_path) }}" alt="" class="img-fluid">
                                     @endif
                                 </a>    
                       </div>
@@ -320,7 +320,7 @@
                                         </div>
                                     </label>
                                 </form>
-                                @if($property->propertyDocument !== null)
+                                <div id="documentList">
                                 @foreach ($property->propertyDocument as $document)
                                     <div class="BodyInnerSec">
                                         <div class="PaperWork">
@@ -337,9 +337,7 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                @else
-                                    <div class="BodyInnerSec"></div>
-                                @endif
+                                </div>
                             </div>
                         </div>
 
@@ -357,17 +355,6 @@
         $(".indoor_media").show();
         $(".outdoor_media").hide();
 
-        $("input[name='switchPlan']").change(function() {
-            if ($("#switchIndoor").is(":checked")) {
-                $(".indoor_media").show();
-                $(".outdoor_media").hide();
-            } else {
-                $(".indoor_media").hide();
-                $(".outdoor_media").show();
-            }
-        });
-
-        
         $("input[name='switchPlan']").change(function() {
              $('#loadMoreButton').hide();
             if ($("#switchIndoor").is(":checked")) {
@@ -513,6 +500,7 @@
             formData.append('fileUpload', $(this)[0].files[0]);
             formData.append('property_id', $("#property-id").val());
             formData.append('_token', '{{ csrf_token() }}');
+            formData.append('type','admin');
 
             $.ajax({
                 url: '{{ route('upload') }}',
@@ -538,7 +526,7 @@
                         '</div>' +
                         '</div>';
 
-                    $('.BodyInnerSec:last').after(newDocument);
+                    $('#documentList').append(newDocument);
                     // Clear the file input field
                     $('#file-upload').val('');
                     toastr.success('Document uploaded successfully!', 'Success', { positionClass: 'toast-top-right' });
@@ -572,5 +560,6 @@
                 }
             });
         });
+        
     </script>
 @endsection

@@ -8,6 +8,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\Admin\NotificationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +43,9 @@ Route::group(['domain' => 'customer.topsidefacilities.test'], function () {
         Route::get('property/{property}/services/{service}', [App\Http\Controllers\Customer\ServiceController::class, 'show'])->name('user.service.show');
         Route::delete('/delete-media/{mediaId}', [PropertyController::class, 'deleteMedia'])->name('media.delete');
         Route::post('/customer-update-service-status', [App\Http\Controllers\Customer\ServiceController::class, 'updateServiceStatus'])->name('customer-update-service-status');
+        Route::post('/add-service', [PropertyController::class, 'addServices'])->name('add-services');
+        Route::get('/customer/notifications', [App\Http\Controllers\Customer\NotificationController::class, 'index'])->name('customer.notifications.index');
+        Route::post('/customer-mark-notification', [App\Http\Controllers\Customer\NotificationController::class, 'markAsRead'])->name('customer.mark.notification');
 
     });
 });
@@ -65,7 +70,8 @@ Route::group(['domain' => 'admin.topsidefacilities.test'], function () {
     Route::post('/update-customer-status', [CustomerController::class, 'updateStatus'])->name('update.customer.status');
     Route::get('property/{property}/services/{service}', [App\Http\Controllers\Admin\ServiceController::class, 'show'])->name('admin.service.show');
     Route::post('/admin-update-service-status', [App\Http\Controllers\Admin\ServiceController::class, 'updateServiceStatus'])->name('admin-update-service-status');
-
+    Route::get('/admin/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::post('/admin-mark-notification', [App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('admin.mark.notification');
 
 });
 

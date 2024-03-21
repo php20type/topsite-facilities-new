@@ -124,9 +124,8 @@
                     </span>
                 </form>
                 <div class="action-button">
-                    <a href="#" class="me-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
-                            fill="none">
+                    <a href="{{ route('customer.notifications.index') }}" class="me-3 position-relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
                             <rect width="48" height="48" rx="10" fill="#389BFE" />
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M24.5 29.8476C30.1392 29.8476 32.7481 29.1242 33 26.2205C33 23.3188 31.1812 23.5054 31.1812 19.9451C31.1812 17.1641 28.5452 14 24.5 14C20.4548 14 17.8188 17.1641 17.8188 19.9451C17.8188 23.5054 16 23.3188 16 26.2205C16.253 29.1352 18.8618 29.8476 24.5 29.8476Z"
@@ -134,6 +133,7 @@
                             <path opacity="0.4" d="M26.8889 32.8574C25.5247 34.3721 23.3967 34.3901 22.0195 32.8574"
                                 stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
+                        <span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle">{{ $notificationCount }}</span>
                     </a>
                     <a href="{{ route('user.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"
@@ -388,7 +388,7 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="WorkCard">
-                                <h4 class="sec-title">work Progress</h4>
+                                <h4 class="sec-title">work Progress <span class="plus-icon">&#43;</span></h4>
                                 <div class="CardBody">
                                     @foreach ($property->services as $service)
                                         <div class="BodyInnerSec">
@@ -418,13 +418,30 @@
 
 
                                         </div>
-                                    @endforeach
+                                    @endforeach  
+                                </div>
+                                @php
+                                    $propertyServices = isset($property) ? $property->services->pluck('id')->toArray() : null;
+                                @endphp 
+                                <div class="AddServiceButton text-center">
+                                    <button id="addNewServiceBtn" class="btn btn-primary">Add New Service</button>
+                                    <div id="propertyDropdown" class="col-lg-12" style="display: none;">
+                                        <div class="form-group{{ $errors->has('property_service_id') ? ' has-error' : '' }}">
+                                            <select name="property_service_id[]" class="form-select" id="property_multiselect" aria-label="Default select example" multiple="multiple">
+                                                @foreach ($services as $service)
+                                                    @if (!in_array($service->id, $propertyServices))
+                                                        <option value="{{ $service->id }}">{{ $service->name }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                          <div class="col-lg-6">
                             <div class="WorkCard">
-                                <h4 class="sec-title">Paper Work</h4>
+                               <h4 class="sec-title">Paper Work</h4>
                                 <form id="file-upload-form" class="uploader" enctype="multipart/form-data">
                                     <input type="hidden" id="property-id" value="{{ $property->id }}">
                                     <input id="file-upload" type="file" name="fileUpload" accept="image/*"
@@ -434,11 +451,10 @@
                                             <i class="fa-solid fa-cloud-arrow-up"></i>
                                             <div>Upload</div>
                                             <div id="notimage" class="hidden">Please select an image</div>
-                                            {{-- <span id="file-upload-btn" class="btn btn-primary">Select a file</span> --}}
                                         </div>
                                     </label>
                                 </form>
-                                @if($property->propertyDocument !== null)
+                                <div id="documentList">
                                 @foreach ($property->propertyDocument as $document)
                                     <div class="BodyInnerSec">
                                         <div class="PaperWork">
@@ -455,9 +471,7 @@
                                         </div>
                                     </div>
                                 @endforeach
-                                @else
-                                    <div class="BodyInnerSec"></div>
-                                @endif
+                                </div>
                             </div>
                         </div>
 
@@ -531,41 +545,41 @@
             }
         });
 
-        document.getElementById('loadMoreButton').addEventListener('click', function() {
-            var category = $("#switchIndoor").is(":checked") ? 'indoor' : 'outdoor';
-            var property_id = this.dataset.property_id;
-            var page = category === 'indoor' ? $('#indoor_page') : $('#outdoor_page');
+        document.addEventListener('DOMContentLoaded', function() {
+            $(document).on('click', '#loadMoreButton', function() {
+                var category = $("#switchIndoor").is(":checked") ? 'indoor' : 'outdoor';
+                var property_id = this.dataset.property_id;
+                var page = category === 'indoor' ? $('#indoor_page') : $('#outdoor_page');
 
-            $.ajax({
-                url: '/fetch-more-media',
-                method: 'GET',
-                data: {
-                    category: category,
-                    property: property_id,
-                    page: parseInt(page.val())+1,
-                },
-                success: function(response) {
-                    var mediaContainer = category === 'indoor' ? $('.indoor_media') : $('.outdoor_media');
-                    var nextPage = parseInt(page.val()) + 1;
-                        page.val(nextPage);
-                        if (response.data.length > 0) {
-                            response.data.forEach(function(media) {
-                                var mediaElement = createMediaElement(media, category);
-                                mediaContainer.append(mediaElement);
-                            });
-                        }
-                    if (response.status === 'not_found' || response.status === 'no_more_media') {
-                        $('#loadMoreButton').hide(); // Hide button if no more records found
-                    } 
-                },
-                error: function(error) {
-                    console.error(error);
-                }
+                $.ajax({
+                    url: '/fetch-more-media',
+                    method: 'GET',
+                    data: {
+                        category: category,
+                        property: property_id,
+                        page: parseInt(page.val())+1,
+                    },
+                    success: function(response) {
+                        var mediaContainer = category === 'indoor' ? $('.indoor_media') : $('.outdoor_media');
+                        var nextPage = parseInt(page.val()) + 1;
+                            page.val(nextPage);
+                            if (response.data.length > 0) {
+                                response.data.forEach(function(media) {
+                                    var mediaElement = createMediaElement(media, category);
+                                    mediaContainer.append(mediaElement);
+                                });
+                            }
+                        if (response.status === 'not_found' || response.status === 'no_more_media') {
+                            $('#loadMoreButton').hide(); // Hide button if no more records found
+                        } 
+                    },
+                    error: function(error) {
+                        console.error(error);
+                    }
+                });
             });
         });
-
-
-
+        
         function createMediaElement(media,category) {
 
             var isVideo = /\.(mp4|mov)$/i.test(media.file_path);
@@ -588,6 +602,7 @@
 
             return $mediaElement;
         }
+
         function deleteMedia(mediaId){
          if (!confirm('Are you sure?')) return false;
 
@@ -612,30 +627,6 @@
                 }
             });   
         }
-        // $('.delete-media').click(function() {
-        //     if (!confirm('Are you sure?')) return false;
-
-        //     var mediaId = $(this).data('media-id');
-
-        //     $.ajax({
-        //         url: '{{ route('media.delete', ['mediaId' => '__mediaId__']) }}'.replace('__mediaId__',
-        //             mediaId),
-        //         type: 'DELETE',
-        //         data: {
-        //             '_token': '{{ csrf_token() }}'
-        //         },
-        //         success: function(response) {
-        //             console.log(response);
-        //             // Remove the media element from the DOM
-        //             $(`[data-media-id="${mediaId}"]`).parent().remove();
-        //             $(this).parent().remove(); // Assuming button is a direct child of the media element
-        //             toastr.success('Delete media successfully!', 'Delete', { positionClass: 'toast-top-right' });
-        //         },
-        //         error: function(xhr, status, error) {
-        //             console.error(error);
-        //         }
-        //     });
-        // });
 
         $("#file-upload-btn").click(function() {
             $("#file-upload").click();
@@ -663,6 +654,7 @@
             formData.append('fileUpload', $(this)[0].files[0]);
             formData.append('property_id', $("#property-id").val());
             formData.append('_token', '{{ csrf_token() }}');
+            formData.append('type','customer');
 
             $.ajax({
                 url: '{{ route('upload') }}',
@@ -688,7 +680,7 @@
                         '</div>' +
                         '</div>';
 
-                    $('.BodyInnerSec:last').after(newDocument);
+                    $('#documentList').append(newDocument);
                     // Clear the file input field
                     $('#file-upload').val('');
                     toastr.success('Document uploaded successfully!', 'Success', { positionClass: 'toast-top-right' });
@@ -724,5 +716,61 @@
                 }
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function() {    
+            $('#addNewServiceBtn').click(function() {
+                $('#propertyDropdown').toggle(); // Toggle the visibility of the dropdown
+            });
+        });
+
+        $('#property_multiselect').change(function() {
+            if ($(this).find('option').length > 0) {
+                $('#addNewServiceBtn').show(); // Show the button if there are available services
+            } else {
+                $('#addNewServiceBtn').hide(); // Hide the button if there are no available services
+            }
+
+            $(this).keyup(function(event) {
+                if (event.keyCode === 13) { // Check if Enter key is pressed
+                    addService();
+                }
+            });
+        });
+
+        function addService() {
+            var selectedServices = $('#property_multiselect').val();
+
+            // Make sure at least one service is selected
+            if (selectedServices.length > 0) {
+                // Make an AJAX request to add the selected services
+                $.ajax({
+                    url: '{{ route('add-services') }}', // Update the URL with your route
+                    method: 'POST',
+                    data: {
+                        property_id: '{{ $property->id }}', // Assuming $property is available in the view
+                        services: selectedServices,
+                        "_token": "{{ csrf_token() }}",
+
+                    },
+                    success: function(response) {
+                        var serviceName;
+                        $.each(selectedServices, function(index, serviceId) {
+                            var serviceUrl = "{{ route('user.service.show', ['property' => $property->id, 'service' => ':serviceId']) }}";
+                            serviceUrl = serviceUrl.replace(':serviceId', serviceId);
+                            serviceName = $('#property_multiselect option[value="' + serviceId + '"]').text();
+                            $('.CardBody').append('<div class="BodyInnerSec"><p>' + serviceName + '</p><a href="' + serviceUrl + '" class="btn new">New</a></div>');
+                            $('#property_multiselect option[value="' + serviceId + '"]').remove();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+
+            propertyDropdownVisible = false;
+            $('#propertyDropdown').hide();
+        }
     </script>
 @endsection

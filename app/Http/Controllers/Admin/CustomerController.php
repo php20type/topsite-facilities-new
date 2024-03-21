@@ -13,6 +13,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\UserNotification;
+use Exception;
+use Illuminate\Mail\Message;
 
 use App\Models\User;
 
@@ -25,6 +27,9 @@ class CustomerController extends Controller
     {
         $users = User::where('is_approve', 1)->where('is_admin', 0)->get();
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('adminlogin');
+        }
         $notificationCount = $user->unreadNotifications->count();
         return view('admin.customer.list', compact('users', 'notificationCount'));
     }
@@ -53,6 +58,9 @@ class CustomerController extends Controller
         $properties = Property::with('propertyType')->where('user_id', $id)->orderBy('created_at', 'desc')->get();
         $users = User::find($id);
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('adminlogin');
+        }
         $notificationCount = $user->unreadNotifications->count();
         return view('admin.customer.show', compact('properties', 'users', 'notificationCount'));
     }
@@ -88,6 +96,9 @@ class CustomerController extends Controller
         $outdoorMedia = $property->propertyMedia()->where('category', 'outdoor')->take(1)->get();
         $service = Service::all();
         $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('adminlogin');
+        }
         $notificationCount = $user->unreadNotifications->count();
         if (!$property) {
             return response()->view('errors.404', [], 404);
@@ -117,18 +128,27 @@ class CustomerController extends Controller
         $user->approve_at = Carbon::now();
         $user->save();
 
-        $recipientEmail = $user->email;
-        $email_subject = "Customer Approve Email From topeside";
+        try {
+            $recipientEmail = 'crazycoder09@gmail.com'; //$user->email
+            $email_subject = 'Your account is active now.';
+            $user_name = $user->name;
+            $login_link = route('customerlogin');
 
-        Mail::send('emails.customer_approve_email', ['recipientEmail' => $recipientEmail, 'email_subject' => $email_subject], function ($message) use ($recipientEmail, $email_subject) {
-            $message->to($recipientEmail, 'topside')
-                ->subject($email_subject);
-            $message->from('topside@gmail.com', 'Alex');
-        });
+            // Generate HTML content
+            $htmlContent = "<p>Your account registration request is approved and you can now actively use the portal.</p>";
+            $htmlContent .= "<p>You can login from here: <a href=\"{$login_link}\">Login</a></p>";
 
-        $user1 = Auth::user();
-        $user1->notify(new UserNotification($user1->email, 'Your custom message here'));
-        // Mail::to($recipientEmail)->send(new CustomerApproveEmail());
+            // Send email with blade view
+            Mail::send('emails.email', ['htmlContent' => $htmlContent, 'user_name' => $user_name], function ($message) use ($recipientEmail, $email_subject) {
+                $message->to($recipientEmail)
+                    ->subject($email_subject)
+                    ->from('topside@gmail.com', 'Alex');
+            });
+        } catch (Exception $e) {
+            return "Failed to send email: " . $e->getMessage();
+        }
+
+        $user->notify(new UserNotification($user->email, " Welcome to the team {$user->name}.", "admin@gmail.com", $login_link));
 
         return response()->json(['message' => 'Status updated successfully'], 200);
     }
@@ -139,6 +159,8 @@ class CustomerController extends Controller
             'fileUpload' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust file types and size as needed
             'property_id' => 'required|exists:properties,id'
         ]);
+
+        $property = Property::find($request->property_id);
 
         // Handle file upload
         if ($request->hasFile('fileUpload')) {
@@ -151,6 +173,59 @@ class CustomerController extends Controller
             $propertyDocument->property_id = $request->property_id;
             $propertyDocument->document_path = $filePath;
             $propertyDocument->save();
+
+            if ($request->type == "customer") {
+                try {
+                    $recipientEmail = 'crazycoder09@gmail.com';
+                    $email_subject = 'A paperwork is added..';
+                    $user_name = 'Team';
+                    $property_link = route('admin.property.details', ['id' => $property->id]);
+                    $property_name = $property->name;
+
+                    // Generate HTML content
+                    $htmlContent = "<p> A document is added by " . $property->user->name . " to {$property_name} property,</p>";
+                    $htmlContent .= "<p>so kindly check the same from here : <a href=\"{$property_link}\">{$property_link}</a></p>";
+
+                    // Send email with blade view
+                    Mail::send('emails.email', ['htmlContent' => $htmlContent, 'user_name' => $user_name], function ($message) use ($recipientEmail, $email_subject) {
+                        $message->to($recipientEmail)
+                            ->subject($email_subject)
+                            ->from('topside@gmail.com', 'Alex');
+                    });
+
+                    $admin = User::find(1);
+                    $admin->notify(new UserNotification($admin->email, " {$property->user->name} added Document name as a paperwork for {$property_name}.", $property->user->email, $property_link));
+
+                } catch (Exception $e) {
+                    return "Failed to send email: " . $e->getMessage();
+                }
+
+            } else {
+                try {
+                    $recipientEmail = 'crazycoder09@gmail.com'; // $property->user->email
+                    $email_subject = 'A paperwork is added.';
+                    $user_name = $property->user->name;
+                    $property_link = route('user.property.show', ['property' => $request->property_id]);
+                    $property_name = $property->name;
+
+                    // Generate HTML content
+                    $htmlContent = "<p>A document is added by us to your property {$property_name},</p>";
+                    $htmlContent .= "<p>So kindly check the same at your convenience from here: <a href=\"{$property_link}\">{$property_link}</a></p>";
+
+                    // Send email with blade view
+                    Mail::send('emails.email', ['htmlContent' => $htmlContent, 'user_name' => $user_name], function ($message) use ($recipientEmail, $email_subject) {
+                        $message->to($recipientEmail)
+                            ->subject($email_subject)
+                            ->from('topside@gmail.com', 'Alex');
+                    });
+
+                    $user = $property->user;
+                    $user->notify(new UserNotification($user->email, " TSF added Document name as a paperwork for {$property_name}.", "admin@gmail.com", $property_link));
+
+                } catch (Exception $e) {
+                    return "Failed to send email: " . $e->getMessage();
+                }
+            }
 
             return response()->json(['message' => 'File uploaded successfully', 'document_path' => $filePath, 'document' => $propertyDocument], 200);
         }
