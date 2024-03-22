@@ -129,7 +129,7 @@ class CustomerController extends Controller
         $user->save();
 
         try {
-            $recipientEmail = 'crazycoder09@gmail.com'; //$user->email
+            $recipientEmail = $user->email; //
             $email_subject = 'Your account is active now.';
             $user_name = $user->name;
             $login_link = route('customerlogin');
@@ -202,7 +202,7 @@ class CustomerController extends Controller
 
             } else {
                 try {
-                    $recipientEmail = 'crazycoder09@gmail.com'; // $property->user->email
+                    $recipientEmail = $property->user->email; // 
                     $email_subject = 'A paperwork is added.';
                     $user_name = $property->user->name;
                     $property_link = route('user.property.show', ['property' => $request->property_id]);

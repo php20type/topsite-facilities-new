@@ -73,7 +73,7 @@ class ServiceController extends Controller
         $property->services()->updateExistingPivot($serviceId, ['status' => $newStatus]);
 
         try {
-            $recipientEmail = 'crazycoder09@gmail.com'; //   $property->user->email
+            $recipientEmail = $property->user->email; //   
             $email_subject = 'Your requirement of ' . $service->name . ' is ' . $newStatus . ' now';
             $user_name = $property->user->name;
             $chat_link = route('user.service.show', ['property' => $propertyId, 'service' => $serviceId]);

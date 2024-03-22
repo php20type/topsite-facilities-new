@@ -142,7 +142,7 @@ class PropertyController extends Controller
         }
 
         try {
-            $recipientEmail = 'crazycoder09@gmail.com'; // Auth::user()->email
+            $recipientEmail = Auth::user()->email; // 
             $email_subject = 'Your property is visible now.';
             $user_name = Auth::user()->name;
             $property_link = route('user.property.show', ['property' => $property->id]);
