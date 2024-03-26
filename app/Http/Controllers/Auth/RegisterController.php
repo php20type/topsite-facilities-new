@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use Exception;
 use Illuminate\Mail\Message;
 use App\Notifications\UserNotification;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller
 {
@@ -97,37 +98,70 @@ class RegisterController extends Controller
 
         try {
             $recipientEmail = 'crazycoder09@gmail.com';
-            $email_subject = 'A new user registration is requested to be approved.';
-            $user_name = 'Team'; // Assuming you want to use 'Team' as the user name if $user is not defined
+            $email_subject = 'Verify Your Account';
+            $user_name = $user->name;
+            $token = Str::random(60);
 
-            // Assuming $user is supposed to be a variable containing user information
             $user = $user ?? (object) ['name' => 'Unknown'];
 
-            // Extracting user name from $user
             $user_name = isset ($user->name) ? $user->name : $user_name;
+            $user->remember_token = $token;
+            $user->save();
+            $verification_link = route('verify.account', $token);
 
-            $request_link = route('admin.request');
-
-            $htmlContent = "<p>{$user_name} has requested for a new account on the portal. Please verify the details shared and approve the request by clicking the link below:</p>";
-            $htmlContent .= "<p><a href=\"{$request_link}\">Approve Request</a></p>";
-
-            Mail::send('emails.email', [
+            Mail::send('emails.verify_account', [
                 'user_name' => $user_name,
-                'htmlContent' => $htmlContent,
+                'verification_link' => $verification_link,
             ], function ($message) use ($recipientEmail, $email_subject) {
                 $message->to($recipientEmail)
                     ->subject($email_subject)
                     ->from('topside@gmail.com', 'Alex');
             });
 
-            $admin = User::find(1);
-            // Assuming UserNotification expects recipient email, notification message, and sender email
-            $admin->notify(new UserNotification($admin->email, "A new account request is received from {$user_name}.", $user->email, $request_link));
-
             return redirect()->route('customerlogin');
         } catch (Exception $e) {
             echo "Failed to send email: " . $e->getMessage();
         }
 
+    }
+
+    public function VerifyAccount($token)
+    {
+        $user = User::where('remember_token', $token)->first();
+
+        if ($user) {
+            $user->email_verified_at = now();
+            $user->save();
+
+            try {
+                $recipientEmail = 'crazycoder09@gmail.com';
+                $email_subject = 'A new user registration is requested to be approved.';
+                $user_name = 'Team';
+
+                $request_link = route('admin.request');
+
+                $htmlContent = "<p>{$user->name} has requested for a new account on the portal. Please verify the details shared and approve the request by clicking the link below:</p>";
+                $htmlContent .= "<p><a href=\"{$request_link}\">Approve Request</a></p>";
+
+                Mail::send('emails.email', [
+                    'user_name' => $user_name,
+                    'htmlContent' => $htmlContent,
+                ], function ($message) use ($recipientEmail, $email_subject) {
+                    $message->to($recipientEmail)
+                        ->subject($email_subject)
+                        ->from('topside@gmail.com', 'Alex');
+                });
+
+                $admin = User::find(1);
+                $admin->notify(new UserNotification($admin->email, "A new account request is received from {$user->name}.", $user->email, $request_link));
+
+                return redirect()->route('customerlogin');
+            } catch (Exception $e) {
+                echo "Failed to send email: " . $e->getMessage();
+            }
+        } else {
+            // Token not found or user not associated with the token
+            return redirect()->route('verification.error')->with('error', 'Invalid verification token.');
+        }
     }
 }

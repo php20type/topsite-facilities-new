@@ -21,8 +21,15 @@ class RequestController extends Controller
         }
 
         $notificationCount = $user->unreadNotifications->count();
-        $users = User::where('is_approve', 0)->where('is_admin', 0)->get();
-        $requests = User::where('is_approve', 1)->where('is_admin', 0)->get();
+        $users = User::where('is_approve', 0)
+            ->whereNotNull('email_verified_at')
+            ->where('is_admin', 0)
+            ->get();
+
+        $requests = User::where('is_approve', 1)
+            ->whereNotNull('email_verified_at')
+            ->where('is_admin', 0)
+            ->get();
         return view('admin.request.list', compact('users', 'requests', 'notificationCount'));
     }
 }
