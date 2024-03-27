@@ -349,8 +349,7 @@
                                             <img src="{{ asset('storage/' . $media->file_path) }}" alt="">
                                         </a>
                                     @endif
-                                    <button class="delete-media"
-                                        data-media-id="{{ $media->id }}" onClick="deleteMedia('{{ $media->id }}')"><i class="fa-solid fa-xmark"></i></button>
+                                    <button class="delete-media" data-media-id="{{ $media->id }}" onClick="deleteMedia('{{ $media->id }}')"><i class="fa-solid fa-xmark"></i></button>
                                 </a>  
                                 </div>      
                         @endforeach
@@ -605,9 +604,6 @@
 
         function deleteMedia(mediaId){
          if (!confirm('Are you sure?')) return false;
-
-            var mediaId = $(this).data('media-id');
-
             $.ajax({
                 url: '{{ route('media.delete', ['mediaId' => '__mediaId__']) }}'.replace('__mediaId__',
                     mediaId),
