@@ -115,6 +115,7 @@
                                 <th>Property(2)</th>
                                 <th>Property(3)</th>
                                 <th>Property(4)</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -149,6 +150,13 @@
                                             </td>
                                         @endif
                                     @endforeach
+                                    @if ($user->properties->count() > 4)
+                                        <td>
+                                            <a href="{{ route('admin.customer.show', ['customer' => $user->id]) }}">See more...</a>
+                                        </td>
+                                    @else   
+                                    <td> - </td> 
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

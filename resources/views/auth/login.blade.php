@@ -38,6 +38,7 @@
                             class="form-control @error('password') is-invalid @enderror" name="password" required
                             autocomplete="current-password">
                         <label for="password" class="lab-style">{{ __('Password') }}</label>
+                        <span toggle="#password" class="eye-toggle fas fa-eye-slash field-icon toggle-password"></span>
                         @error('password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -67,4 +68,23 @@
         </div>
     </div>
     <!-- login-section end -->
+@endsection
+@section('page_scripts')
+<script>
+    $(document).ready(function() {
+        $(".toggle-password").click(function() {
+            // Toggle the type attribute of the password input field
+            var toggleId = $(this).attr('toggle');
+            var inputType = $(toggleId).attr("type");
+            if (inputType === "password") {
+                $(toggleId).attr("type", "text");
+                $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+            } else {
+                $(toggleId).attr("type", "password");
+                $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+            }
+        });
+    });
+    
+</script>
 @endsection

@@ -22,7 +22,7 @@
                     </a>
                 </div>
                 <div class="title-header ms-4">
-                    <h2>Property Detail</h2>
+                    <h2>Property Details</h2>
                 </div>
             </div>
             <div class="right-content">
@@ -64,7 +64,7 @@
         <section class="PropertyDetail">
             <div class="container-fluid">
                 <div class="back">
-                    <a href="{{ route('admin.customer.show', ['customer' => $property->user_id]) }}">
+                    <a href="{{ url()->previous() }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="12" viewBox="0 0 21 12"
                             fill="none">
                             <path
@@ -75,8 +75,7 @@
                 <div class="Inventorysection">
                     <div class="section-header mb-3">
                         <h4>Inventory</h4>
-                        <p>{{ $property->description }}
-                        </p>
+                        <p>{!! nl2br(e($property->description)) !!}</p>
                     </div>
                     <div class="InventoryDetails">
                         <h4 class="sec-title">{{ $property->name }}</h4>
@@ -145,7 +144,7 @@
                                                 fill="white" />
                                         </svg>
                                     </span>
-                                    <p> 4 </p>
+                                    <p> {{ $property->bedrooms }} </p>
                                 </li>
                             @endif
                             @if ($property->property_type_id == 1 || $property->property_type_id == 3)
@@ -158,7 +157,7 @@
                                                 fill="white" />
                                         </svg>
                                     </span>
-                                    <p> 2 </p>
+                                    <p>{{ $property->bathrooms }} </p>
                                 </li>
                             @endif
                             <li class="list-inline-item">
@@ -205,40 +204,46 @@
                         </ul>
                     </div>
                     <div class="InventoryImages">
-                            <div class="indoor_media">
-                      @foreach ($indoorMedia as $media)
-                      <div class="image_media">
-                                <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
-                                    @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
-                                        <video controls class="img-fluid">
-                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    @else
-                                        <img src="{{ asset('storage/' . $media->file_path) }}" alt="" class="img-fluid">
-                                    @endif
-                                </a>
-                                </div>
-                        @endforeach
-                            </div>
-                            <div class="outdoor_media">
-                        @foreach ($outdoorMedia as $media)
-                      <div class="image_media">
-
-                                <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
-                                    @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
-                                        <video controls class="img-fluid">
-                                            <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    @else
+                        <div class="indoor_media">
+                            @if(!$indoorMedia->isEmpty())          
+                            @foreach ($indoorMedia as $media)
+                                <div class="image_media">
+                                    <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
+                                        @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
+                                            <video controls class="img-fluid">
+                                                <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        @else
                                             <img src="{{ asset('storage/' . $media->file_path) }}" alt="" class="img-fluid">
-                                    @endif
-                                </a>    
-                      </div>
-                        @endforeach
-                            </div>
-
+                                        @endif
+                                    </a>
+                                </div>
+                            @endforeach
+                            @else
+                            <p>Currently no records added.</p>
+                            @endif
+                        </div>
+                        <div class="outdoor_media">
+                            @if(!$outdoorMedia->isEmpty())  
+                            @foreach ($outdoorMedia as $media)
+                                <div class="image_media">
+                                    <a href="{{ asset('storage/' . $media->file_path) }}" target="_blank class="media-link">
+                                        @if (strpos($media->file_path, '.mp4') !== false || strpos($media->file_path, '.mov') !== false)
+                                            <video controls class="img-fluid">
+                                                <source src="{{ asset('storage/' . $media->file_path) }}" type="video/mp4">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        @else
+                                                <img src="{{ asset('storage/' . $media->file_path) }}" alt="" class="img-fluid">
+                                        @endif
+                                    </a>    
+                                </div>
+                            @endforeach
+                            @else
+                            <p>Currently no records added.</p>
+                            @endif
+                        </div>
                     </div>
                     <input type="hidden" id="indoor_page" value="1">
                     <input type="hidden" id="outdoor_page" value="1">
@@ -304,7 +309,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-6" id="pepar_works">
                             <div class="WorkCard">
                                 <h4 class="sec-title">Paper Work</h4>
                                 <form id="file-upload-form" class="uploader" enctype="multipart/form-data">
@@ -532,7 +537,8 @@
                     toastr.success('Document uploaded successfully!', 'Success', { positionClass: 'toast-top-right' });
                 },
                 error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
+                    var errorMessage = xhr.responseJSON.message;
+                    toastr.error(errorMessage, 'Error', { positionClass: 'toast-top-right' });
                 }
             });
         });

@@ -29,6 +29,19 @@
 .open-btn:hover {
     color: #0056b3; /* Hover color */
 }
+
+.notification-time {
+        color: #2dadfe; /* You can change the color to your preference */
+        font-weight: bold; /* Optional: You can adjust the font weight */
+    }
+
+
+     .open-btn {
+        display: flex;
+        align-items: center; /* Center vertically */
+        justify-content: center; /* Center horizontally */
+        height: 100%; /* Ensure button takes full height of parent */
+    }
 </style>
 @endsection
 @section('content')
@@ -98,9 +111,16 @@
                             <div class="card mb-3 {{ is_null($notification->read_at) ? 'unread' : '' }}">
                                 <div class="card-body">
                                     <!-- Display notification content here -->
-                                    <h5 class="card-title">{{ $notification['data']['sender_id'] }}</h5>
-                                    <p class="card-text">{{ $notification['data']['message'] }}</p>
+                                    {{-- <h5 class="card-title">{{ $notification->data['sender_id'] }}</h5> --}}
+                                    <p class="card-text">{{ $notification->data['message'] }}</p>
                                     <!-- Open button -->
+                                     <p class="notification-time">
+                                        @if($notification->created_at->diffInDays() > 1)
+                                            {{ $notification->created_at->format('jS F') }} <!-- Display date -->
+                                        @else
+                                            {{ $notification->created_at->diffForHumans() }} <!-- Display relative time -->
+                                        @endif
+                                    </p>
                                     <a href="#" class="open-btn" data-notification-id="{{ $notification->id }}"><i class="fas fa-eye"></i></a>
                                 </div>
                             </div>
@@ -129,6 +149,7 @@
                         "_token": "{{ csrf_token() }}",
                     },
                     success: function(response) {
+                        console.log(response.redirect_to);
                         // Redirect to the desired page
                         window.location.href = response.redirect_to;
                     },

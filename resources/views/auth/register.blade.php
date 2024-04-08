@@ -46,6 +46,7 @@
                             class="form-control @error('password') is-invalid @enderror" name="password" required
                             autocomplete="new-password">
                         <label for="password" class="lab-style">{{ __('Password') }}</label>
+                        <span toggle="#password" class="eye-toggle fas fa-eye-slash field-icon toggle-password" onclick="togglePasswordVisibility('#password')"></span>
                         @error('password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -56,6 +57,7 @@
                         <input id="password-confirm" type="password" placeholder="6 + strong character" class="form-control"
                             name="password_confirmation" required autocomplete="new-password">
                         <label for="password-confirm" class="lab-style">{{ __('Confirm Password') }}</label>
+                        <span toggle="#password-confirm" class="eye-toggle fas fa-eye-slash field-icon toggle-password" onclick="togglePasswordVisibility('#password-confirm')"></span>
                     </div>
                     <div class="form-group form-check">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
@@ -70,4 +72,22 @@
         </div>
     </div>
     <!-- Register-section end -->
+@endsection
+@section('page_scripts')
+<script>
+    function togglePasswordVisibility(target) {
+        const passwordInput = document.querySelector(target);
+        const icon = document.querySelector('[toggle="' + target + '"]'); // Find the icon with the corresponding toggle attribute
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        }
+    }
+</script>
 @endsection

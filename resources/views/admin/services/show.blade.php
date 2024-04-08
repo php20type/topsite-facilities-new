@@ -20,7 +20,7 @@
     <aside class="app-sidebar">
         <div id="close"><a href="javascript:void(0)"><i class="fa-regular fa-xmark"></i></a></div>
         <div class="profile-header">
-            <a href="#"><img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user" /></a>
+            <a href="{{ route('admin.customer.index') }}"><img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user" /></a>
         </div>
         <nav class="sidebar-nav">
             <ul class="list-inline">
@@ -123,18 +123,20 @@
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     {{ $status }}
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    @foreach ($property->services as $ser)
-                                        @if ($service->id == $ser->id)
-                                            @if ($ser->pivot->status === 'New')
-                                                <li><a class="dropdown-item" href="#" onclick="updateServiceStatus('In Progress')">In Progress</a></li>
-                                            @elseif($ser->pivot->status === 'In Progress')
-                                                <li><a class="dropdown-item" href="#" onclick="updateServiceStatus('Ready for Review')">Ready for Review</a></li>
-                                            @else
+                                @if ($status !== 'Ready for Review')
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        @foreach ($property->services as $ser)
+                                            @if ($service->id == $ser->id)
+                                                @if ($ser->pivot->status === 'New')
+                                                    <li><a class="dropdown-item" href="#" onclick="updateServiceStatus('In Progress')">In Progress</a></li>
+                                                @elseif($ser->pivot->status === 'In Progress')
+                                                    <li><a class="dropdown-item" href="#" onclick="updateServiceStatus('Ready for Review')">Ready for Review</a></li>
+                                                @else
+                                                @endif
                                             @endif
-                                        @endif
-                                    @endforeach
-                                </ul>
+                                        @endforeach
+                                    </ul>
+                                @endif    
                             </div>
                         
                     </div>
@@ -288,10 +290,14 @@
                 if (newStatus === 'In Progress') {
                     $('.dropdown-menu').append('<li><a class="dropdown-item" href="#" onclick="updateServiceStatus(\'Ready for Review\')">Ready for Review</a></li>');
                 } else if (newStatus === 'Ready for Review') {
-                    $('.dropdown-menu').append('');
+                    $('.dropdown-menu').hide();
                 } else if (newStatus === 'New') {
                     $('.dropdown-menu').append('<li><a class="dropdown-item" href="#" onclick="updateServiceStatus(\'In Progress\')">In Progress</a></li>');
                 }
+            }
+
+            function updateDropDownForReadyReview(){
+                $('.dropdown-menu').hide();
             }
 
         $(document).ready(function() {

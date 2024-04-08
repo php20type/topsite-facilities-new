@@ -97,14 +97,14 @@ class RegisterController extends Controller
         ]);
 
         try {
-            $recipientEmail = 'crazycoder09@gmail.com';
+            $recipientEmail = $user->email;
             $email_subject = 'Verify Your Account';
             $user_name = $user->name;
             $token = Str::random(60);
 
             $user = $user ?? (object) ['name' => 'Unknown'];
 
-            $user_name = isset ($user->name) ? $user->name : $user_name;
+            $user_name = isset($user->name) ? $user->name : $user_name;
             $user->remember_token = $token;
             $user->save();
             $verification_link = route('verify.account', $token);
@@ -118,7 +118,7 @@ class RegisterController extends Controller
                     ->from('topside@gmail.com', 'Alex');
             });
 
-            return redirect()->route('customerlogin');
+            return redirect('/verify-page');
         } catch (Exception $e) {
             echo "Failed to send email: " . $e->getMessage();
         }

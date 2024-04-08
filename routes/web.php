@@ -32,6 +32,8 @@ Route::group(['domain' => 'customer.topsidefacilities.test'], function () {
     Route::get('/verify-account/{token}', [RegisterController::class, 'VerifyAccount'])->name('verify.account');
     Route::post('/CreateUser', [RegisterController::class, 'createUser'])->name('CreateUser');
     Route::view('/thank-you', 'thank-you');
+    Route::view('/verify-page', 'verify-page');
+    Route::view('/disapprove-page', 'disapprove-page');
     Route::any('/user-logout', [LoginController::class, 'logout'])->name('user.logout');
 
     // Protected routes that require thentication
@@ -69,6 +71,7 @@ Route::group(['domain' => 'admin.topsidefacilities.test'], function () {
     Route::get('/request', [RequestController::class, 'index'])->name('admin.request');
     Route::post('/search-properties', [CustomerController::class, 'searchProperties'])->name('search.properties');
     Route::post('/update-customer-status', [CustomerController::class, 'updateStatus'])->name('update.customer.status');
+    Route::post('/disapprove-customer-status', [CustomerController::class, 'disapprovStatus'])->name('disapprove.customer.status');
     Route::get('property/{property}/services/{service}', [App\Http\Controllers\Admin\ServiceController::class, 'show'])->name('admin.service.show');
     Route::post('/admin-update-service-status', [App\Http\Controllers\Admin\ServiceController::class, 'updateServiceStatus'])->name('admin-update-service-status');
     Route::get('/admin/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');

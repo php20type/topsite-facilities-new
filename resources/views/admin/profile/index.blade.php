@@ -94,5 +94,15 @@
 
             // Close all dropdowns with the 'form-select' class
             $('.form-select').selectpicker('toggle');
+
+            $('#profile_picture').change(function(event) {
+                var input = event.target;
+                var reader = new FileReader();
+                reader.onload = function() {
+                    var dataURL = reader.result;
+                    $('#profile_picture_preview').html('<img src="' + dataURL + '" alt="Profile Picture Preview" style="max-width: 100px; max-height: 100px;">');
+                };
+                reader.readAsDataURL(input.files[0]);
+            });
         });
 @endsection

@@ -29,15 +29,11 @@
     <div class="login-section thank-you">
         <div class="login_content-form-sec">
             <div class="login_header text-center">
-                <h1>Thank you for subscribing!</h1>
-                <p>Please wait until your account gets verified.</p>
-                {{-- <a href="javascript:void(0)"
-                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                    class="go-home">Go Back</a> --}}
-                <a href="{{ route('customerlogin') }}" class="go-home">Go Back</a>
-                <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
+                 <h1>Sorry!</h1>
+                <p>Your account request is unfortunately disapproved.</p>
+                {{-- <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
                     {{ csrf_field() }}
-                </form>
+                </form> --}}
             </div>
         </div>
     </div>

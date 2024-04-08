@@ -115,11 +115,10 @@ title {
 
 /* Login & Register page css */
 
-
 .login-section {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -207,7 +206,7 @@ title {
     left: 1em;
     color: #868686;
 }
-
+/* 
 .singup-form-sec .form-group.password:before {
     content: "";
     position: absolute;
@@ -216,9 +215,15 @@ title {
     width: 32px;
     height: 32px;
     background-repeat: no-repeat;
-    background-image: url(../img/home/lock.svg);
+    background-image: url(../img/home/eye.svg);
+} */
+.singup-form-sec .form-group .eye-toggle {
+    position: absolute;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+        color: #adacac;
 }
-
 .singup-form-sec .form-group.form-check {
     font-size: 16px;
     color: #868686;
@@ -727,7 +732,9 @@ title {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+}
+.WorkCard .CardBody .BodyInnerSec:not(:last-child) {
+margin-bottom: 20px;
 }
 .WorkCard .CardBody .BodyInnerSec p {
     color: var(--Grey_Color, #868686);
@@ -1406,7 +1413,7 @@ margin-bottom: 20px;
     line-height: 14px;
     color: #AAAAAA;
     vertical-align: middle;
-    padding: 16px 20px;
+    padding: 16px 10px;
     border-color: #DDDDDD;
 }
 .table-responsive table tbody td .user-name a {
@@ -1570,6 +1577,15 @@ margin-bottom: 20px;
     margin-right: 1rem !important;
 }
 
+.top-header .right-content .badge.rounded-circle {
+    width: 24px;
+        height: 24px;
+        line-height: 20px;
+        font-size: 10px;
+        top: -10px !important;
+        right: 12px !important;
+}
+
 /* Responsive Css Start */
 
 @media screen and (max-width: 1600px) {
@@ -1580,9 +1596,27 @@ margin-bottom: 20px;
     .top-header .right-content .search-property {
         flex: 0 0 60%;
     }
+         .login_content-form-sec .login_header p {
+             color: #868686;
+             font-size: 16px;
+             line-height: 20px;
+             padding-bottom: 20px;
+         }
+    
+         .login_content-form-sec .login_header h2 {
+             font-size: 24px;
+             line-height: 30px;
+             padding-bottom: 20px;
+         }
+    
+         .login_content-form-sec .login_header img {
+             padding-bottom: 15px;
+             width: 80px;
+         }
 }
 
 @media screen and (max-width: 1440px) {
+   
     .content-chat-message-user .head-chat-message-user {
         padding: 14px;
     }
@@ -1759,6 +1793,9 @@ margin-bottom: 20px;
     }
 }
 @media screen and (max-width: 576px) {
+    .PropertyForm .form-group .AmenitiesForm .Bedroom label {
+        width: 120px;
+    }
     .WorkSection .WorkCard .CardBody {
         padding: 10px;
     }

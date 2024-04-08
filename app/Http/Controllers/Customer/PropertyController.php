@@ -13,7 +13,7 @@ use App\Models\PropertyMedia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Exception;
-use Illuminate\Mail\Message;
+use Illuminate\Support\Facades\Storage;
 use App\Notifications\UserNotification;
 
 
@@ -86,7 +86,6 @@ class PropertyController extends Controller
      */
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -101,6 +100,7 @@ class PropertyController extends Controller
             'outdoor_images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,wmv|max:256000'
         ]);
 
+        // $validatedData['description'] = nl2br($validatedData['description']);
         $validatedData['user_id'] = Auth::user()->id;
         $property = Property::create($validatedData);
 
@@ -116,26 +116,85 @@ class PropertyController extends Controller
         }
 
         // Handle indoor images
-        if ($request->hasFile('indoor_images')) {
-            foreach ($request->file('indoor_images') as $file) {
-                $path = $file->store('indoor_images', 'public'); // Store file in the 'public' disk under the 'indoor_images' directory
+        // if ($request->hasFile('indoor_images')) {
+        //     foreach ($request->file('indoor_images') as $file) {
+        //         $path = $file->store('indoor_images', 'public'); // Store file in the 'public' disk under the 'indoor_images' directory
+        //         // Save file path and type in the database
+        //         PropertyMedia::create([
+        //             'property_id' => $property->id,
+        //             'file_path' => $path,
+        //             'category' => 'indoor', // Save the MIME type of the file (image or video)
+        //         ]);
+        //     }
+        // }
+
+        // Handle outdoor images upload and storage
+        // if ($request->hasFile('outdoor_images')) {
+        //     foreach ($request->file('outdoor_images') as $image) {
+        //         $path = $image->store('outdoor_images', 'public'); // Store image in the 'public' disk under the 'outdoor_images' directory
+        //         // Save image path in the database
+        //         PropertyMedia::create([
+        //             'property_id' => $property->id,
+        //             'file_path' => $path,
+        //             'category' => 'outdoor',
+        //         ]);
+        //     }
+        // }
+
+        if ($request->has('preview_indoor_images')) {
+            $indoorImageUrls = json_decode($request->input('preview_indoor_images'));
+
+            foreach ($indoorImageUrls as $imageUrl) {
+                // Get the image content
+                $imageContent = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imageUrl));
+                // Determine the file extension
+                $extension = '';
+                if (preg_match('/^data:image\/(\w+);base64,/', $imageUrl, $matches)) {
+                    $extension = $matches[1];
+                }
+
+                // $extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
+                // Generate a unique filename
+                $fileName = 'indoor_image_' . uniqid() . '.' . $extension;
+
+                // Save the image to storage
+                Storage::disk('public')->put('indoor_images/' . $fileName, $imageContent);
                 // Save file path and type in the database
                 PropertyMedia::create([
                     'property_id' => $property->id,
-                    'file_path' => $path,
-                    'category' => 'indoor', // Save the MIME type of the file (image or video)
+                    'file_path' => 'indoor_images/' . $fileName,
+                    'category' => 'indoor',
                 ]);
             }
         }
 
-        // Handle outdoor images upload and storage
-        if ($request->hasFile('outdoor_images')) {
-            foreach ($request->file('outdoor_images') as $image) {
-                $path = $image->store('outdoor_images', 'public'); // Store image in the 'public' disk under the 'outdoor_images' directory
-                // Save image path in the database
+        // Handle outdoor images
+        if ($request->has('preview_outdoor_images')) {
+            $outdoorImageUrls = json_decode($request->input('preview_outdoor_images'));
+
+            foreach ($outdoorImageUrls as $imageUrl) {
+                // Get the image content
+                // $imageContent = file_get_contents($imageUrl);
+
+                // Determine the file extension
+                // $extension = pathinfo($imageUrl, PATHINFO_EXTENSION);
+
+                $imageContent = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $imageUrl));
+                $extension = '';
+                if (preg_match('/^data:image\/(\w+);base64,/', $imageUrl, $matches)) {
+                    $extension = $matches[1];
+                }
+
+                // Generate a unique filename
+                $fileName = 'outdoor_image_' . uniqid() . '.' . $extension;
+
+                // Save the image to storage
+                Storage::disk('public')->put('outdoor_images/' . $fileName, $imageContent);
+
+                // Save file path and type in the database
                 PropertyMedia::create([
                     'property_id' => $property->id,
-                    'file_path' => $path,
+                    'file_path' => 'outdoor_images/' . $fileName,
                     'category' => 'outdoor',
                 ]);
             }
@@ -380,7 +439,10 @@ class PropertyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $property = Property::findOrFail($id);
+        $property->delete();
+        return response()->json(['status' => 200, 'message' => 'Property deleted successfully.'], 200);
+        // Redirect back or to any other route after deletion
     }
 
     public function deleteMedia($mediaId)

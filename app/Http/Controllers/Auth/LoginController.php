@@ -191,8 +191,11 @@ class LoginController extends Controller
                     if ($user->approve_at !== null && $user->is_approve == 1) {
                         $token = md5(uniqid());
                         $user->update(['token' => $token]);
-
                         return redirect()->route('user.property.index');
+                    } else if ($user->email_verified_at == null) {
+                        return redirect('/verify-page');
+                    } else if ($user->approve_at !== null && $user->is_approve == 0) {
+                        return redirect('/disapprove-page');
                     } else {
                         return redirect('/thank-you');
                     }

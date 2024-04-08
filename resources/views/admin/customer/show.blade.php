@@ -2,6 +2,42 @@
     'title' => 'Topside Facilities Management - customer',
 ])
 
+@section('page_style')
+<style>
+.profile-box {
+    display: flex;
+    align-items: flex-start; /* Align items at the top */
+    margin-bottom: 20px; /* Adjust margin as needed */
+}
+
+.user-image {
+    flex: 1; /* Occupy one-third of the space */
+    margin-right: 20px; /* Adjust margin as needed */
+}
+
+.user-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.user-name {
+    flex: 0 0 100px; /* Fixed width for the name section */
+    margin-right: 20px; /* Adjust margin as needed */
+}
+
+.user-details {
+    flex: 2; /* Occupy two-thirds of the space */
+}
+
+.user-details p {
+    margin: 0 0 10px; /* Add some space between detail items */
+}
+
+/* Adjust styles for better appearance */
+
+</style>
+@endsection
+
 @section('content')
     <!-- dashboard screen start -->
     @include('admin.aside_menu')
@@ -67,13 +103,24 @@
         <section class="ts-property-section">
             <div class="container-fluid">
                 <div class="profile-box mb-3">
-                    <div class="user-svg">
-                        <img src="{{ URL::asset('img/home/profile.png') }}">
+                    <div class="user-image">
+                        @if($users->profile_picture)
+                            <img src="{{ asset('storage/' . $users->profile_picture) }}" alt="{{ $users->name }}">
+                        @else
+                            <img src="{{ URL::asset('img/home/profile.png') }}" alt="Default Profile Picture">
+                        @endif
                     </div>
                     <div class="user-name">
-                        {{ $users->name }}
+                        <p>{{ $users->name }}</p>
+                    </div>
+                    <div class="user-details">
+                        <p><strong>Birthdate:</strong> {{ $users->birthdate ?: 'Not provided' }}</p>
+                        <p><strong>Phone:</strong> {{ $users->phone ?: 'Not provided' }}</p>
+                        <p><strong>Address:</strong> {{ $users->address ?: 'Not provided' }}</p>
+                        <p><strong>Background:</strong> {{ $users->background ?: 'Not provided' }}</p>
                     </div>
                 </div>
+                @if(!$properties->isEmpty())
                 <div class="row" id="results-container">
                     @foreach ($properties as $property)
                         <div class="col-lg-4 col-md-6 property_details" data-id="{{ $property->id }}">
@@ -211,6 +258,9 @@
                         </div>
                     @endforeach
                 </div>
+                @else
+                  <p>Currently no records added.</p>
+                @endif
                 <div id="search-results-container"></div>
             </div>
         </section>

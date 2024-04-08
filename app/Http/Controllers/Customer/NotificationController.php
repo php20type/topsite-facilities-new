@@ -14,10 +14,25 @@ class NotificationController extends Controller
         if (!$user) {
             return redirect()->route('customerlogin');
         }
-        $notificationCount = $user->unreadNotifications->count();
+        // $notificationCount = $user->unreadNotifications->count();
 
-        $notifications = auth()->user()->notifications;
+        // $notifications = auth()->user()->notifications;
+        // return view('customer.notification.index', compact('notifications', 'notificationCount'));
+
+
+        // Retrieve unread notifications and sort them from latest to oldest
+        $unreadNotifications = $user->unreadNotifications->sortByDesc('created_at');
+
+        // Retrieve read notifications and sort them from latest to oldest
+        $readNotifications = $user->readNotifications->sortByDesc('created_at');
+
+        // Concatenate unread and read notifications
+        $notifications = $unreadNotifications->concat($readNotifications);
+
+        $notificationCount = $unreadNotifications->count();
+
         return view('customer.notification.index', compact('notifications', 'notificationCount'));
+
     }
     public function markAsRead(Request $request)
     {

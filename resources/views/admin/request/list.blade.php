@@ -100,6 +100,10 @@
                                         <a href="#" class="check-button" data-user-id="{{ $user->id }}">
                                             <i class="fa-regular fa-circle-check"></i>
                                         </a>
+
+                                        <a href="#" class="disapprove-button" data-user-id="{{ $user->id }}">
+                                            <i class="fas fa-times"></i> <!-- Font Awesome close icon (X) -->
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -113,7 +117,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Status</th>
-                                <th>Date of Approve</th>
+                                <th>Date of Approval</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -161,7 +165,7 @@
                 "searchable": false
             }]
         });
-        var customerListTable = $('#customer-list').DataTable({
+        $('#customer-list').DataTable({
             select: false,
             "columnDefs": [{
                 className: "Name",
@@ -182,6 +186,29 @@
                     data: {
                         userId: userId,
                         isApprov: 1,
+                        '_token': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $('#customerRow_' + userId).remove();
+                        console.log('Status updated successfully');
+                    },
+                    error: function(error) {
+                        // Handle error
+                        console.error('Error updating status', error);
+                    }
+                });
+            });
+            $('.disapprove-button').on('click', function(e) {
+                e.preventDefault();
+
+                var userId = $(this).data('user-id');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('disapprove.customer.status') }}',
+                    data: {
+                        userId: userId,
+                        isApprov: 0,
                         '_token': '{{ csrf_token() }}'
                     },
                     success: function(response) {

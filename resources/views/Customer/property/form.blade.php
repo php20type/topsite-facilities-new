@@ -34,7 +34,7 @@
     </div>
    <div class="col-lg-12">
        <div class="form-group">
-           {{ Form::text('address1', null, ['class' => 'form-control mb-3', 'placeholder' => 'Address Line Comes Here 123,']) }}
+           {{ Form::text('address1', null, ['class' => 'form-control mb-3', 'placeholder' => 'Address Line Comes Here']) }}
            {{ Form::label('address1', 'Address 1', ['class' => 'lab-style']) }}
            @if ($errors->has('address1'))
                <span class="help-block">
@@ -61,6 +61,7 @@
                'placeholder' => 'Lorem Ipsum',
                'id' => 'indoor_images',
                'multiple' => 'multiple',
+               'onchange' => 'handleIndoorFileSelect(event)'
            ]) !!}
            {!! Form::label('indoor_images', 'Indoor Images/Videos', ['class' => 'lab-style']) !!}
            @if ($errors->has('indoor_images'))
@@ -69,15 +70,21 @@
                </span>
            @endif
        </div>
+       <div id="indoor-preview" class="preview-container">
+            <!-- Preview of selected images/videos will appear here -->
+        </div>
+        {!! Form::hidden('preview_indoor_images', null, ['id' => 'preview_indoor_images']) !!}
+
    </div>
 
    <div class="col-lg-6">
-       <div class="form-group">
+        <div class="form-group">
            {!! Form::file('outdoor_images[]', [
                'class' => 'form-control',
                'placeholder' => 'Lorem Ipsum',
                'id' => 'outdoor_images',
                'multiple' => 'multiple',
+               'onchange' => 'handleOutdoorFileSelect(event)'
            ]) !!}
            {!! Form::label('outdoor_images', 'Outdoor Images/Videos', ['class' => 'lab-style']) !!}
            @if ($errors->has('outdoor_images'))
@@ -85,7 +92,11 @@
                    <strong>{{ $errors->first('outdoor_images') }}</strong>
                </span>
            @endif
-       </div>
+        </div>
+        <div id="outdoor-preview" class="preview-container">
+            <!-- Preview of selected outdoor images/videos will appear here -->
+        </div>
+        {!! Form::hidden('preview_outdoor_images', null, ['id' => 'preview_outdoor_images']) !!}
    </div>
    <div class="col-lg-12">
        <div class="form-group">
@@ -106,6 +117,11 @@
                            </span>
                            {{ Form::label('bedrooms', 'Bedroom:', ['class' => 'svg-label']) }}
                            {{ Form::text('bedrooms', 1, ['class' => 'AmenitiesInput', 'id' => 'bedrooms', 'placeholder' => '1']) }}
+                           @if ($errors->has('bedrooms'))
+                               <span class="help-block mt-3">
+                                   <strong>{{ $errors->first('bedrooms') }}</strong>
+                               </span>
+                           @endif
                        </div>
                    </div>
 
@@ -121,6 +137,11 @@
                            </span>
                            {{ Form::label('bathrooms', 'Bathroom:', ['class' => 'svg-label']) }}
                            {{ Form::text('bathrooms', 1, ['class' => 'AmenitiesInput', 'id' => 'bathrooms', 'placeholder' => '1']) }}
+                           @if ($errors->has('bathrooms'))
+                               <span class="help-block">
+                                   <strong>{{ $errors->first('bathrooms') }}</strong>
+                               </span>
+                           @endif
                        </div>
                    </div>
 
@@ -135,7 +156,7 @@
                                </svg>
                            </span>
                            {{ Form::label('parking', 'Parking:', ['class' => 'svg-label']) }}
-                           <div class="form-check form-check-inline ms-4">
+                           <div class="form-check form-check-inline mx-3">
                                {{ Form::radio('parking', 1, true, ['class' => 'form-check-input', 'id' => 'inlineRadio1']) }}
                                {{ Form::label('inlineRadio1', 'Yes', ['class' => 'form-check-label']) }}
                            </div>
@@ -159,7 +180,7 @@
                            {{ Form::label('area', 'Area:', ['class' => 'svg-label']) }}
                            {{ Form::text('area', null, ['class' => 'AmenitiesInput', 'placeholder' => '170 M2']) }}
                            @if ($errors->has('area'))
-                               <span class="help-block">
+                               <span class="help-block ms-3">
                                    <strong>{{ $errors->first('area') }}</strong>
                                </span>
                            @endif
@@ -196,7 +217,7 @@
                 $('#property_multiselect').select2();
             });
 
-           function toggleAmenitiesFields(propertyType) {
+            function toggleAmenitiesFields(propertyType) {
 
                if (propertyType === '1') {
                    $('.bathroom-section').show();
@@ -229,13 +250,118 @@
                    $('#bedrooms').val(null);
 
                }
-           }
+            }
 
-           toggleAmenitiesFields($('#Property').val());
+            toggleAmenitiesFields($('#Property').val());
 
-           $('#Property').on('change', function() {
+            $('#Property').on('change', function() {
                var selectedPropertyType = $(this).val();
                toggleAmenitiesFields(selectedPropertyType);
-           });
+            });
+
+            function getFileType(fileType) {
+                if (fileType.startsWith('image/')) {
+                    return 'Image';
+                } else if (fileType.startsWith('video/')) {
+                    return 'Video';
+                } else {
+                    return 'File';
+                }
+            }
+
+            function createPreviewItem(src, fileType) {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `
+                    <img src="${src}" alt="Preview" class="preview-image">
+                    <button class="delete-btn" onclick="removePreviewItem(this)"><i class="fas fa-times"></i></button>
+                `;
+                return previewItem;
+            }
+
+            function removePreviewItem(btn) {
+                const previewItem = btn.parentNode;
+                const previewContainer = previewItem.parentNode;
+                previewContainer.removeChild(previewItem);
+
+                // Update hidden input field with preview images
+                updateHiddenInput();
+            }
+
+            function updateHiddenInput() {
+                const previewContainer = document.getElementById('preview');
+                const previewImages = previewContainer.getElementsByClassName('preview-item');
+                const imageUrls = [];
+
+                for (let i = 0; i < previewImages.length; i++) {
+                    const imageUrl = previewImages[i].querySelector('img').src;
+                    imageUrls.push(imageUrl);
+                }
+
+                // Set hidden input value to JSON array of image URLs
+                document.getElementById('preview_images').value = JSON.stringify(imageUrls);
+            }
+
+            function handleOutdoorFileSelect(event) {
+                const files = event.target.files;
+                const preview = document.getElementById('outdoor-preview');
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const fileType = getFileType(file.type);
+                        const previewItem = createPreviewItem(e.target.result, fileType);
+                        preview.appendChild(previewItem);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function handleIndoorFileSelect(event) {
+                const files = event.target.files;
+                const preview = document.getElementById('indoor-preview');
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const fileType = getFileType(file.type);
+                        const previewItem = createPreviewItem(e.target.result, fileType);
+                        preview.appendChild(previewItem);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            document.addEventListener('submit', function (event) {
+                const previewContainer = document.getElementById('outdoor-preview');
+                const previewImages = previewContainer.getElementsByClassName('preview-item');
+                const imageUrls = [];
+
+                for (let i = 0; i < previewImages.length; i++) {
+                    const imageUrl = previewImages[i].querySelector('img').src;
+                    imageUrls.push(imageUrl);
+                }
+
+                document.getElementById('preview_outdoor_images').value = JSON.stringify(imageUrls);
+            });
+
+            document.addEventListener('submit', function (event) {
+                const previewContainer = document.getElementById('indoor-preview');
+                const previewImages = previewContainer.getElementsByClassName('preview-item');
+                const imageUrls = [];
+
+                for (let i = 0; i < previewImages.length; i++) {
+                    const imageUrl = previewImages[i].querySelector('img').src;
+                    imageUrls.push(imageUrl);
+                }
+
+                document.getElementById('preview_indoor_images').value = JSON.stringify(imageUrls);
+            });
        </script>
    @endsection

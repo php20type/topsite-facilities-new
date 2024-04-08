@@ -19,7 +19,7 @@
     <aside class="app-sidebar">
         <div id="close"><a href="javascript:void(0)"><i class="fa-regular fa-xmark"></i></a></div>
         <div class="profile-header">
-            <a href="#"><img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user" /></a>
+            <a href="{{ route('user.property.index') }}"><img src="{{ URL::asset('img/logo/logo.svg') }}" alt="user" /></a>
         </div>
         <nav class="sidebar-nav">
             <ul class="list-inline">

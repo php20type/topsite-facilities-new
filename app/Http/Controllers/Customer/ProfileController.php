@@ -34,14 +34,28 @@ class ProfileController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($request->input('id')),
             ],
+            'birthdate' => 'nullable|date',
+            'phone' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'background' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $user = User::findorFail($request->input('id'));
-        $user->update($request->only(['name', 'email']));
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('customer_images', 'public');
+
+            // Update the user's profile picture path in the database
+            $user = User::findOrFail($request->input('id'));
+            $user->profile_picture = $path;
+            $user->save();
+        }
+
+        $user = User::findOrFail($request->input('id'));
+        $user->update($request->only(['name', 'email', 'birthdate', 'phone', 'address', 'background']));
 
         return redirect()->back()->with('success', 'Your profile has been updated successfully.');
     }
@@ -74,14 +88,28 @@ class ProfileController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($request->input('id')),
             ],
+            'birthdate' => 'nullable|date',
+            'phone' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'background' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $user = User::findorFail($request->input('id'));
-        $user->update($request->only(['name', 'email']));
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('customer_images', 'public');
+
+            // Update the user's profile picture path in the database
+            $user = User::findOrFail($request->input('id'));
+            $user->profile_picture = $path;
+            $user->save();
+        }
+
+        $user = User::findOrFail($request->input('id'));
+        $user->update($request->only(['name', 'email', 'birthdate', 'phone', 'address', 'background']));
 
         return redirect()->back()->with('success', 'Your profile has been updated successfully.');
     }

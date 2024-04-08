@@ -156,7 +156,7 @@ class CustomerController extends Controller
     {
         // Validate the request
         $request->validate([
-            'fileUpload' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Adjust file types and size as needed
+            'fileUpload' => 'required|file|mimes:jpeg,png,pdf', // Adjust file types and size as needed
             'property_id' => 'required|exists:properties,id'
         ]);
 
@@ -180,6 +180,7 @@ class CustomerController extends Controller
                     $email_subject = 'A paperwork is added..';
                     $user_name = 'Team';
                     $property_link = route('admin.property.details', ['id' => $property->id]);
+                    $property_link1 = route('admin.property.details', ['id' => $property->id]) . '#pepar_works';
                     $property_name = $property->name;
 
                     // Generate HTML content
@@ -194,7 +195,7 @@ class CustomerController extends Controller
                     });
 
                     $admin = User::find(1);
-                    $admin->notify(new UserNotification($admin->email, " {$property->user->name} added Document name as a paperwork for {$property_name}.", $property->user->email, $property_link));
+                    $admin->notify(new UserNotification($admin->email, " {$property->user->name} added {$fileName} as a paperwork for {$property_name}.", $property->user->email, $property_link1));
 
                 } catch (Exception $e) {
                     return "Failed to send email: " . $e->getMessage();
@@ -206,6 +207,7 @@ class CustomerController extends Controller
                     $email_subject = 'A paperwork is added.';
                     $user_name = $property->user->name;
                     $property_link = route('user.property.show', ['property' => $request->property_id]);
+                    $property_link2 = route('user.property.show', ['property' => $request->property_id]) . '#pepar_works';
                     $property_name = $property->name;
 
                     // Generate HTML content
@@ -220,7 +222,7 @@ class CustomerController extends Controller
                     });
 
                     $user = $property->user;
-                    $user->notify(new UserNotification($user->email, " TSF added Document name as a paperwork for {$property_name}.", "admin@gmail.com", $property_link));
+                    $user->notify(new UserNotification($user->email, " TSF added {$fileName} as a paperwork for {$property_name}.", "admin@gmail.com", $property_link2));
 
                 } catch (Exception $e) {
                     return "Failed to send email: " . $e->getMessage();
@@ -253,5 +255,34 @@ class CustomerController extends Controller
 
         // You might return a response here if needed
         return response()->json(['message' => 'Document deleted successfully']);
+    }
+    public function disapprovStatus(Request $request)
+    {
+        $userId = $request->input('userId');
+        $isApprove = $request->input('isApprov');
+
+        $user = User::findOrFail($userId);
+        $user->is_approve = $isApprove;
+        $user->approve_at = Carbon::now();
+        $user->save();
+
+        try {
+            $recipientEmail = $user->email;
+            $email_subject = 'Your account is disapproved.';
+            $user_name = $user->name;
+
+            // Generate HTML content
+            $htmlContent = "<p> Sorry, your account request is unfortunately disapproved.</p>";
+
+            // Send email with blade view
+            Mail::send('emails.email', ['htmlContent' => $htmlContent, 'user_name' => $user_name], function ($message) use ($recipientEmail, $email_subject) {
+                $message->to($recipientEmail)
+                    ->subject($email_subject)
+                    ->from('topside@gmail.com', 'Alex');
+            });
+        } catch (Exception $e) {
+            return "Failed to send email: " . $e->getMessage();
+        }
+        return response()->json(['message' => 'Status updated successfully'], 200);
     }
 }
